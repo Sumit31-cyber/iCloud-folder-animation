@@ -1,54 +1,54 @@
-import { Feather } from "@expo/vector-icons";
-import React, { useState } from "react";
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import React from "react";
+import { Dimensions, View } from "react-native";
 import Animated, {
+  SharedValue,
   useAnimatedStyle,
-  useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
-
-// const keyframe = new Keyframe({
-//   0: {
-//     transform: [{ translateX: 0 }],
-//   },
-//   100: {
-//     transform: [{ translateX: -150 }],
-//   },
-// });
-const Footer = () => {
-  const isOpen = useSharedValue(0);
-  const [open, setOpen] = useState(false);
-
-  const backButtonAnimation = useAnimatedStyle(() => {
+const Footer = ({ isOpen }: { isOpen: SharedValue<boolean> }) => {
+  const addFolderAnimation = useAnimatedStyle(() => {
     return {
-      opacity: withTiming(open ? 1 : 0),
+      opacity: withTiming(!isOpen.value ? 1 : 0),
       transform: [
         {
-          scale: withTiming(open ? 1 : 0),
+          scale: withTiming(!isOpen.value ? 1 : 0),
         },
         {
-          translateX: withTiming(open ? -80 : 0),
+          translateX: withTiming(!isOpen.value ? 0 : -80),
         },
       ],
     };
   });
-  const headerTitleStyle = useAnimatedStyle(() => {
+
+  const moreOptionAnimation = useAnimatedStyle(() => {
     return {
-      opacity: withTiming(!open ? 1 : 0),
+      opacity: withTiming(isOpen.value ? 1 : 0),
       transform: [
         {
-          translateX: withTiming(!open ? 0 : -140),
+          scale: withTiming(isOpen.value ? 1 : 0),
+        },
+        {
+          translateX: withTiming(isOpen.value ? -40 : 40),
         },
       ],
     };
   });
+  const centerTextStyle = useAnimatedStyle(() => {
+    return {
+      opacity: withTiming(isOpen.value ? 1 : 0),
+      transform: [
+        {
+          scale: withTiming(isOpen.value ? 1.2 : 0),
+        },
+      ],
+    };
+  });
+
   return (
     <View
-      onTouchEnd={() => {
-        setOpen(!open);
-      }}
       style={{
         flexDirection: "row",
         height: SCREEN_HEIGHT * 0.08,
@@ -57,7 +57,7 @@ const Footer = () => {
         alignItems: "center",
         paddingHorizontal: 20,
         marginBottom: 10,
-        justifyContent: "space-between",
+        justifyContent: "space-evenly",
       }}
     >
       <View
@@ -65,33 +65,37 @@ const Footer = () => {
           flexDirection: "row",
         }}
       >
-        <Animated.View style={[headerTitleStyle]}>
-          <Text
-            style={{ fontSize: 26, fontFamily: "medium", letterSpacing: 0.9 }}
-          >
-            Folders
-          </Text>
+        <Animated.View style={[addFolderAnimation]}>
+          <MaterialCommunityIcons
+            name="folder-plus-outline"
+            size={30}
+            color="black"
+          />
         </Animated.View>
 
         <Animated.View
           style={[
-            backButtonAnimation,
+            moreOptionAnimation,
             { flexDirection: "row", alignItems: "center", gap: 8 },
           ]}
         >
-          <Feather name="arrow-left" size={26} color="black" />
-          <Text
-            style={{ fontSize: 26, fontFamily: "medium", letterSpacing: 1 }}
-          >
-            All iCloud
-          </Text>
+          <MaterialCommunityIcons
+            name="dots-horizontal-circle-outline"
+            size={30}
+            color="black"
+          />
         </Animated.View>
       </View>
-      <Feather name="search" size={26} color="black" />
+      <View style={{ marginLeft: -40 }}>
+        <Animated.Text style={centerTextStyle}>12 Notes</Animated.Text>
+      </View>
+      <MaterialCommunityIcons
+        name="square-edit-outline"
+        size={28}
+        color="black"
+      />
     </View>
   );
 };
 
 export default Footer;
-
-const styles = StyleSheet.create({});

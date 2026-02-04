@@ -1,5 +1,6 @@
 import Folder from "@/components/folders";
 import Header from "@/components/header";
+import Footer from "@/components/ui/footer";
 import React from "react";
 import { View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
@@ -33,6 +34,7 @@ export default function App() {
           onPress={handleOnFolderPress}
         />
       </View>
+      <Footer isOpen={isOpen} />
     </SafeAreaView>
   );
 }
