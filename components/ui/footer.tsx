@@ -2,6 +2,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import React from "react";
 import { Dimensions, View } from "react-native";
 import Animated, {
+  Easing,
   SharedValue,
   useAnimatedStyle,
   withTiming,
@@ -11,13 +12,19 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const Footer = ({ isOpen }: { isOpen: SharedValue<boolean> }) => {
   const addFolderAnimation = useAnimatedStyle(() => {
     return {
-      opacity: withTiming(!isOpen.value ? 1 : 0),
+      opacity: withTiming(!isOpen.value ? 1 : 0, {
+        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+      }),
       transform: [
         {
-          scale: withTiming(!isOpen.value ? 1 : 0),
+          scale: withTiming(!isOpen.value ? 1 : 0, {
+            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+          }),
         },
         {
-          translateX: withTiming(!isOpen.value ? 0 : -80),
+          translateX: withTiming(!isOpen.value ? 0 : -80, {
+            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+          }),
         },
       ],
     };
@@ -25,13 +32,19 @@ const Footer = ({ isOpen }: { isOpen: SharedValue<boolean> }) => {
 
   const moreOptionAnimation = useAnimatedStyle(() => {
     return {
-      opacity: withTiming(isOpen.value ? 1 : 0),
+      opacity: withTiming(isOpen.value ? 1 : 0, {
+        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+      }),
       transform: [
         {
-          scale: withTiming(isOpen.value ? 1 : 0),
+          scale: withTiming(isOpen.value ? 1 : 0, {
+            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+          }),
         },
         {
-          translateX: withTiming(isOpen.value ? -40 : 40),
+          translateX: withTiming(isOpen.value ? -40 : 40, {
+            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+          }),
         },
       ],
     };
@@ -58,6 +71,7 @@ const Footer = ({ isOpen }: { isOpen: SharedValue<boolean> }) => {
         paddingHorizontal: 20,
         marginBottom: 10,
         justifyContent: "space-evenly",
+        backgroundColor: "#F5F5F5",
       }}
     >
       <View

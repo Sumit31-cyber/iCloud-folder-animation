@@ -1,10 +1,19 @@
+import { GradientColors } from "@/app";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { ColorValue, Pressable, StyleSheet, View } from "react-native";
+import { Dimensions, Pressable, StyleSheet, View } from "react-native";
+import Animated, {
+  Easing,
+  SharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
+import Docs from "./docs";
 
-type GradientColors = readonly [ColorValue, ColorValue, ...ColorValue[]];
-
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+const _animationDuration = 1000;
 const Folder = ({
   height = 100,
   width = 180,
@@ -12,6 +21,8 @@ const Folder = ({
   borderRadius = 18,
   gradientColor = ["#ef4065", "#eb1943"],
   onPress,
+  openedFolderIndex,
+  index,
 }: {
   height?: number;
   width?: number;
@@ -19,48 +30,69 @@ const Folder = ({
   borderRadius?: number;
   gradientColor?: GradientColors;
   onPress: () => void;
+  openedFolderIndex: SharedValue<number>;
+  index: number;
 }) => {
-  const renderPlaceholders = () => {
-    return (
-      <>
-        {new Array(3)
-          .fill(0)
-          .map((_, index) => ({ id: index }))
-          .map((item, index) => {
-            return (
-              <View
-                key={item.id}
-                style={{
-                  height: 8,
-                  width:
-                    index === 0
-                      ? "100%"
-                      : index === 1
-                      ? "40%"
-                      : index === 2
-                      ? "70%"
-                      : 0,
-                  backgroundColor: "#eeeeee",
-                  borderRadius: 10,
-                }}
-              ></View>
-            );
-          })}
-      </>
-    );
-  };
+  const transformationStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: withTiming(
+            openedFolderIndex.value !== -1
+              ? index < openedFolderIndex.value
+                ? -(600 * (index + 1))
+                : SCREEN_HEIGHT
+              : 0,
+            {
+              duration: _animationDuration,
+              easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+            }
+          ),
+        },
+      ],
+    };
+  }, [openedFolderIndex]);
+  const docsTransformationStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: withTiming(
+            openedFolderIndex.value !== -1
+              ? index === openedFolderIndex.value
+                ? 0
+                : index < openedFolderIndex.value
+                ? -(600 * (index + 1))
+                : SCREEN_HEIGHT
+              : 0,
+            {
+              duration: _animationDuration,
+              easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+            }
+          ),
+        },
+      ],
+    };
+  }, [openedFolderIndex]);
+
   return (
-    <Pressable onPress={onPress}>
-      <View
-        style={{
-          height: height,
-          width: width,
-          flexDirection: "row",
-          borderRadius: borderRadius,
-          overflow: "hidden",
-        }}
+    <Pressable
+      onPress={() => {
+        if (openedFolderIndex.value === -1) onPress();
+      }}
+    >
+      <Animated.View
+        style={[
+          transformationStyle,
+          {
+            height: height,
+            width: width,
+            flexDirection: "row",
+            borderRadius: borderRadius,
+            overflow: "hidden",
+          },
+        ]}
       >
-        {/* Top Notch Border */}
+        {/* First Half of backdrop */}
         <View
           style={{
             height: "100%",
@@ -72,7 +104,7 @@ const Folder = ({
           }}
         ></View>
 
-        {/* Second Row */}
+        {/* Second Half of backdrop */}
         <View
           style={{
             height: "100%",
@@ -110,127 +142,53 @@ const Folder = ({
             }}
           ></View>
         </View>
+      </Animated.View>
+
+      <Animated.View
+        style={[
+          docsTransformationStyle,
+          {
+            position: "absolute",
+            height: height - notchHeight,
+            width: width,
+            bottom: 0,
+          },
+        ]}
+      >
+        <Docs currentIndex={index} activeIndex={openedFolderIndex} />
+      </Animated.View>
+
+      {/* Blurred Folder Top Layer */}
+      <Animated.View
+        style={[transformationStyle, { position: "absolute", height, width }]}
+      >
         <View
           style={{
             position: "absolute",
-            height: height - notchHeight,
+            height: "60%",
             width: "100%",
             bottom: 0,
+            boxShadow: "0 1px 2px rgba(0, 0, 0, 0.4)",
+            borderWidth: StyleSheet.hairlineWidth * 2,
+            borderColor: `${String(gradientColor[1])}10`,
+            borderBottomLeftRadius: borderRadius,
+            borderBottomRightRadius: borderRadius,
+            overflow: "hidden",
+            zIndex: 100,
           }}
         >
-          <View
+          <BlurView intensity={20} style={[StyleSheet.absoluteFill]}></BlurView>
+          <LinearGradient
+            colors={gradientColor}
             style={{
-              alignItems: "flex-end",
-              justifyContent: "center",
-              flexDirection: "row",
-            }}
-          >
-            <View
-              style={{
-                height: "85%",
-                aspectRatio: 0.8,
-                backgroundColor: "#fff",
-                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.3)",
-                borderRadius: 6,
-                gap: 2,
-
-                // alignItems: "center",
-                padding: "3%",
-                zIndex: 3,
-                transform: [
-                  {
-                    rotate: "-20deg",
-                  },
-                  {
-                    translateX: 5,
-                  },
-                ],
-              }}
-            >
-              {renderPlaceholders()}
-            </View>
-            <View
-              style={{
-                height: "85%",
-                aspectRatio: 0.8,
-                backgroundColor: "#fff",
-                borderRadius: 6,
-                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.3)",
-                zIndex: 2,
-                gap: 2,
-                // alignItems: "center",
-                padding: "3%",
-                transform: [
-                  {
-                    rotate: "-20deg",
-                  },
-                  {
-                    translateY: 5,
-                  },
-                ],
-              }}
-            >
-              {renderPlaceholders()}
-            </View>
-            <View
-              style={{
-                height: "85%",
-                aspectRatio: 0.8,
-                backgroundColor: "#fff",
-                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.3)",
-                borderRadius: 6,
-                zIndex: 1,
-                gap: 2,
-                // alignItems: "center",
-                padding: "3%",
-                transform: [
-                  {
-                    rotate: "12deg",
-                  },
-                  {
-                    translateY: 10,
-                  },
-                  {
-                    translateX: -8,
-                  },
-                ],
-              }}
-            >
-              {renderPlaceholders()}
-            </View>
-          </View>
-          <View
-            style={{
-              position: "absolute",
-              height: "60%",
-              width: "100%",
-              bottom: 0,
-              boxShadow: "0 4px 16px rgba(0, 0, 0, 0.4)",
-              borderWidth: StyleSheet.hairlineWidth * 2,
-              borderColor: `${String(gradientColor[1])}10`,
+              flex: 1,
               borderBottomLeftRadius: borderRadius,
               borderBottomRightRadius: borderRadius,
-              overflow: "hidden",
-              zIndex: 100,
+              opacity: 0.4,
             }}
-          >
-            <BlurView
-              intensity={20}
-              style={[StyleSheet.absoluteFill]}
-            ></BlurView>
-            <LinearGradient
-              // Background Linear Gradient
-              colors={gradientColor}
-              style={{
-                flex: 1,
-                borderBottomLeftRadius: borderRadius,
-                borderBottomRightRadius: borderRadius,
-                opacity: 0.4,
-              }}
-            />
-          </View>
+          />
         </View>
-      </View>
+      </Animated.View>
     </Pressable>
   );
 };

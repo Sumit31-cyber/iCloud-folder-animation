@@ -1,34 +1,60 @@
 import { Feather } from "@expo/vector-icons";
 import React from "react";
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Animated, {
+  Easing,
   SharedValue,
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
 
-const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-const Header = ({ isOpen }: { isOpen: SharedValue<boolean> }) => {
+const Header = ({
+  isOpen,
+  onBackButtonPress,
+}: {
+  isOpen: SharedValue<boolean>;
+  onBackButtonPress: () => void;
+}) => {
   const backButtonAnimation = useAnimatedStyle(() => {
     return {
       opacity: withTiming(isOpen.value ? 1 : 0),
       transform: [
         {
-          scale: withTiming(isOpen.value ? 1 : 0),
+          scale: withTiming(isOpen.value ? 1 : 0, {
+            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+          }),
         },
         {
-          translateX: withTiming(isOpen.value ? -80 : 0),
+          translateX: withTiming(isOpen.value ? -80 : 0, {
+            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+          }),
         },
       ],
     };
   });
   const headerTitleStyle = useAnimatedStyle(() => {
     return {
-      opacity: withTiming(!isOpen.value ? 1 : 0),
+      opacity: withTiming(!isOpen.value ? 1 : 0, {
+        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+      }),
       transform: [
         {
-          translateX: withTiming(!isOpen.value ? 0 : -140),
+          scale: withTiming(!isOpen.value ? 1 : 0, {
+            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+          }),
+        },
+        {
+          translateX: withTiming(!isOpen.value ? 0 : -140, {
+            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+          }),
         },
       ],
     };
@@ -64,7 +90,9 @@ const Header = ({ isOpen }: { isOpen: SharedValue<boolean> }) => {
             { flexDirection: "row", alignItems: "center", gap: 8 },
           ]}
         >
-          <Feather name="arrow-left" size={26} color="black" />
+          <TouchableOpacity onPress={onBackButtonPress}>
+            <Feather name="arrow-left" size={26} color="black" />
+          </TouchableOpacity>
           <Text
             style={{ fontSize: 26, fontFamily: "medium", letterSpacing: 1 }}
           >
