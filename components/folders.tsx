@@ -1,8 +1,9 @@
 import { GradientColors, NotesFolder } from "@/constants/docsData";
+import { Entypo } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { Dimensions, Pressable, StyleSheet, View } from "react-native";
+import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   Easing,
   SharedValue,
@@ -173,7 +174,7 @@ const Folder = ({
             height: "60%",
             width: "100%",
             bottom: 0,
-            boxShadow: "0 1px 2px rgba(0, 0, 0, 0.4)",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.2)",
             borderWidth: StyleSheet.hairlineWidth * 2,
             borderColor: `${String(gradientColor[1])}10`,
             borderBottomLeftRadius: borderRadius,
@@ -182,16 +183,41 @@ const Folder = ({
             zIndex: 100,
           }}
         >
-          <BlurView intensity={20} style={[StyleSheet.absoluteFill]}></BlurView>
+          <BlurView
+            intensity={15}
+            // tint="dark"
+            style={[StyleSheet.absoluteFill]}
+          ></BlurView>
           <LinearGradient
             colors={gradientColor}
             style={{
               flex: 1,
               borderBottomLeftRadius: borderRadius,
               borderBottomRightRadius: borderRadius,
-              opacity: 0.4,
+              opacity: 0.5,
             }}
           />
+          <View style={[StyleSheet.absoluteFill, { padding: 20 }]}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text
+                style={{ fontSize: 24, color: "white", fontFamily: "bold" }}
+              >
+                {item.title}
+              </Text>
+              <Entypo name="dots-three-horizontal" size={24} color="white" />
+            </View>
+            <Text
+              style={{ fontSize: 24, color: "white", fontFamily: "regular" }}
+            >
+              {item.notes.length * (index + 1)}
+            </Text>
+          </View>
         </View>
       </Animated.View>
     </Pressable>

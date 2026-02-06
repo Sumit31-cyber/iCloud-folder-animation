@@ -32,6 +32,7 @@ export default function App() {
           alignItems: "center",
           flex: 1,
           gap: 20,
+          marginTop: 20,
         }}
       >
         {notesData.map((item, index) => {
