@@ -1,6 +1,7 @@
 import { easing, HEADER_FOOTER_PADDING } from "@/constants/constants";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
+import { ChevronLeft } from "lucide-react-native";
 import React, { memo, useCallback } from "react";
 import {
   Platform,
@@ -198,7 +199,8 @@ const Header = memo<HeaderProps>(
               accessibilityLabel="Go back"
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <Feather name="arrow-left" size={SIZES.ICON} color={iconColor} />
+              <ChevronLeft size={SIZES.ICON} color={iconColor} />
+              {/* <Feather name="arrow-left" size={SIZES.ICON} color={iconColor} /> */}
             </TouchableOpacity>
             <Text
               style={[styles.subtitle, { color: iconColor }]}

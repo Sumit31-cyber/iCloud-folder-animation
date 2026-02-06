@@ -1,7 +1,7 @@
 import { GradientColors, NotesFolder } from "@/constants/docsData";
-import { Entypo } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
+import { Ellipsis } from "lucide-react-native";
 import React, { memo } from "react";
 import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
@@ -147,7 +147,7 @@ const Folder = ({
             },
           ]}
         >
-          <BlurView intensity={15} style={StyleSheet.absoluteFill} />
+          <BlurView intensity={18} style={StyleSheet.absoluteFill} />
           <LinearGradient
             colors={gradientColor}
             style={[
@@ -162,7 +162,7 @@ const Folder = ({
           <View style={styles.content}>
             <View style={styles.headerRow}>
               <Text style={styles.title}>{item.title}</Text>
-              <Entypo name="dots-three-horizontal" size={24} color="white" />
+              <Ellipsis size={26} color="white" opacity={0.9} />
             </View>
             <Text style={styles.count}>{item.totalNotes}</Text>
           </View>
@@ -260,5 +260,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: "white",
     fontFamily: "regular",
+    top: -4,
+    opacity: 0.9,
   },
 });

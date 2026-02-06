@@ -80,13 +80,13 @@ const CARD_STYLES_VARIATION_3 = [
     zIndex: 3,
   },
   {
-    rotation: "-8deg",
+    rotation: "8deg",
     translateX: -10,
     translateY: -10,
     zIndex: 2,
   },
   {
-    rotation: "-15deg",
+    rotation: "10deg",
     translateX: -20,
     translateY: -10,
     zIndex: 1,
@@ -246,11 +246,6 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
         width: withSpring(
           isActive ? (SCREEN_WIDTH - GAP * 3) * 0.5 : CARD_WIDTH,
           springConfig
-        ),
-
-        opacity: withTiming(
-          isActive || currentIndex <= 2 ? 1 : 0.8,
-          timingConfig
         ),
 
         borderRadius: withSpring(isActive ? 20 : 6, springConfig),
