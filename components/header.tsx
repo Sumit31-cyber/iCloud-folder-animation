@@ -1,21 +1,28 @@
 import { easing, HEADER_FOOTER_PADDING } from "@/constants/constants";
 import { Feather } from "@expo/vector-icons";
 import React from "react";
-import {
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated, {
   SharedValue,
   useAnimatedStyle,
+  withSpring,
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+const springConfig = {
+  damping: 25,
+  stiffness: 100,
+  mass: 0.7,
+  overshootClamping: false,
+  restDisplacementThreshold: 0.01,
+  restSpeedThreshold: 0.01,
+};
+
+const timingConfig = {
+  duration: 400,
+  easing: easing,
+};
 
 const Header = ({
   isOpen,
@@ -25,42 +32,35 @@ const Header = ({
   onBackButtonPress: () => void;
 }) => {
   const { top } = useSafeAreaInsets();
+
   const backButtonAnimation = useAnimatedStyle(() => {
     return {
-      opacity: withTiming(isOpen.value ? 1 : 0),
+      opacity: withTiming(isOpen.value ? 1 : 0, timingConfig),
       transform: [
         {
-          scale: withTiming(isOpen.value ? 1 : 0, {
-            easing: easing,
-          }),
+          scale: withSpring(isOpen.value ? 1 : 0, springConfig),
         },
         {
-          translateX: withTiming(isOpen.value ? -80 : 0, {
-            easing: easing,
-          }),
+          translateX: withSpring(isOpen.value ? -80 : 0, springConfig),
         },
       ],
     };
   });
+
   const headerTitleStyle = useAnimatedStyle(() => {
     return {
-      opacity: withTiming(!isOpen.value ? 1 : 0, {
-        easing: easing,
-      }),
+      opacity: withTiming(!isOpen.value ? 1 : 0, timingConfig),
       transform: [
         {
-          scale: withTiming(!isOpen.value ? 1 : 0, {
-            easing: easing,
-          }),
+          scale: withSpring(!isOpen.value ? 1 : 0, springConfig),
         },
         {
-          translateX: withTiming(!isOpen.value ? 0 : -140, {
-            easing: easing,
-          }),
+          translateX: withSpring(!isOpen.value ? 0 : -140, springConfig),
         },
       ],
     };
   });
+
   return (
     <View
       style={{

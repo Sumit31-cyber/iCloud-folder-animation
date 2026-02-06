@@ -16,6 +16,7 @@ export interface NotesFolder {
   id: string;
   title: string;
   gradientColor: GradientColors;
+  totalNotes: number;
   notes: Note[];
 }
 
@@ -34,6 +35,7 @@ export const notesData = [
     id: "icloud",
     title: "All iCloud",
     gradientColor: ["#ef4065", "#eb1943"] as GradientColors,
+    totalNotes: 32,
     notes: [
       {
         id: 0,
@@ -96,6 +98,7 @@ export const notesData = [
     id: "work",
     title: "Work",
     gradientColor: ["#3488ff", "#18aaeb"] as GradientColors,
+    totalNotes: 6,
     notes: [
       {
         id: 0,
@@ -155,6 +158,7 @@ export const notesData = [
     id: "personal",
     title: "Personal",
     gradientColor: ["#ffea00", "#ffa200"] as GradientColors,
+    totalNotes: 17,
     notes: [
       {
         id: 0,

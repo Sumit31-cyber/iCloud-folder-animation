@@ -7,6 +7,7 @@ import Animated, {
   SharedValue,
   useAnimatedStyle,
   withDelay,
+  withSpring,
   withTiming,
 } from "react-native-reanimated";
 import { _animationDuration } from "./folders";
@@ -46,6 +47,20 @@ const CARD_STYLES = [
   },
 ] as const;
 
+const springConfig = {
+  damping: 28,
+  stiffness: 65,
+  mass: 1,
+  overshootClamping: false,
+  restDisplacementThreshold: 0.01,
+  restSpeedThreshold: 0.01,
+};
+
+const timingConfig = {
+  duration: _animationDuration,
+  easing: easing,
+};
+
 interface PlaceholderProps {
   width: string;
 }
@@ -65,16 +80,6 @@ interface DocumentCardProps {
 
 const DocumentCard: React.FC<DocumentCardProps> = memo(
   ({ currentFolderIndex, activeFolderIndex, docIndex, docData }) => {
-    // const [showContent, setShowContent] = useState(false);
-
-    // useAnimatedReaction(
-    //   () => activeFolderIndex.value !== -1,
-    //   (isOpen, wasOpen) => {
-    //     if (isOpen !== wasOpen) {
-    //       runOnJS(setShowContent)(isOpen);
-    //     }
-    //   }
-    // );
     const placeholders = useMemo(
       () =>
         Array.from({ length: PLACEHOLDER_COUNT }, (_, index) => ({
@@ -105,42 +110,36 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
         currentIndex % ROW_SIZE === 0 ? -5 : expandedCardWidth + GAP + 5;
 
       return {
-        height: withTiming(isActive ? EXP_CARD_HEIGHT : CARD_HEIGHT, {
-          duration: _animationDuration,
-          easing: easing,
-        }),
-
-        width: withTiming(
-          isActive ? (SCREEN_WIDTH - GAP * 3) * 0.5 : CARD_WIDTH,
-          { duration: _animationDuration, easing: easing }
+        height: withSpring(
+          isActive ? EXP_CARD_HEIGHT : CARD_HEIGHT,
+          springConfig
         ),
 
-        opacity: withTiming(isActive || currentIndex <= 2 ? 1 : 0.8, {
-          duration: _animationDuration,
-          easing: easing,
-        }),
+        width: withSpring(
+          isActive ? (SCREEN_WIDTH - GAP * 3) * 0.5 : CARD_WIDTH,
+          springConfig
+        ),
 
-        borderRadius: withTiming(isActive ? 20 : 6, {
-          duration: _animationDuration,
-          easing: easing,
-        }),
+        opacity: withTiming(
+          isActive || currentIndex <= 2 ? 1 : 0.8,
+          timingConfig
+        ),
 
-        left: withTiming(isActive ? expandedLeft : collapsedLeft, {
-          duration: _animationDuration,
-          easing: easing,
-        }),
+        borderRadius: withSpring(isActive ? 20 : 6, springConfig),
+
+        left: withSpring(isActive ? expandedLeft : collapsedLeft, springConfig),
 
         transform: [
           {
-            rotate: withTiming(isActive ? "0deg" : stackStyle.rotation, {
-              duration: _animationDuration,
-              easing: easing,
-            }),
+            rotate: withSpring(
+              isActive ? "0deg" : stackStyle.rotation,
+              springConfig
+            ),
           },
           {
-            translateY: withTiming(
+            translateY: withSpring(
               isActive ? expandedTranslateY - GAP * 1.5 : stackStyle.translateY,
-              { duration: _animationDuration, easing: easing }
+              springConfig
             ),
           },
         ],
@@ -152,18 +151,22 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
 
       return {
         opacity: withDelay(
-          activeFolderIndex.value !== -1 ? 500 : 0,
-          withTiming(isContentVisible ? 1 : 0)
+          activeFolderIndex.value !== -1 ? 650 : 0,
+          withTiming(isContentVisible ? 1 : 0, {
+            duration: 300,
+            easing: easing,
+          })
         ),
       };
     });
+
     const animatedPlaceholderStyle = useAnimatedStyle(() => {
       const isContentVisible = activeFolderIndex.value !== -1;
 
       return {
         opacity: isContentVisible
-          ? withDelay(400, withTiming(0))
-          : withTiming(1),
+          ? withDelay(400, withTiming(0, { duration: 300, easing: easing }))
+          : withTiming(1, { duration: 300, easing: easing }),
       };
     });
 
@@ -257,11 +260,6 @@ const Docs: React.FC<DocsProps> = ({
   docsData,
 }) => {
   const arrayData = useMemo(() => chunkArray(docsData, 3), [docsData]);
-
-  if (__DEV__) {
-    console.log("[Docs] chunked docs:", arrayData);
-  }
-
   return (
     <View style={styles.container}>
       {arrayData.map((row, rowIndex) => (

@@ -1,33 +1,41 @@
-import { HEADER_FOOTER_PADDING } from "@/constants/constants";
+import { easing, HEADER_FOOTER_PADDING } from "@/constants/constants";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import React from "react";
 import { View } from "react-native";
 import Animated, {
-  Easing,
   SharedValue,
   useAnimatedStyle,
+  withSpring,
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const springConfig = {
+  damping: 25,
+  stiffness: 100,
+  mass: 0.7,
+  overshootClamping: false,
+  restDisplacementThreshold: 0.01,
+  restSpeedThreshold: 0.01,
+};
+
+const timingConfig = {
+  duration: 400,
+  easing: easing,
+};
 
 const Footer = ({ isOpen }: { isOpen: SharedValue<boolean> }) => {
   const { bottom } = useSafeAreaInsets();
 
   const addFolderAnimation = useAnimatedStyle(() => {
     return {
-      opacity: withTiming(!isOpen.value ? 1 : 0, {
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      }),
+      opacity: withTiming(!isOpen.value ? 1 : 0, timingConfig),
       transform: [
         {
-          scale: withTiming(!isOpen.value ? 1 : 0, {
-            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-          }),
+          scale: withSpring(!isOpen.value ? 1 : 0, springConfig),
         },
         {
-          translateX: withTiming(!isOpen.value ? 0 : -80, {
-            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-          }),
+          translateX: withSpring(!isOpen.value ? 0 : -80, springConfig),
         },
       ],
     };
@@ -35,29 +43,24 @@ const Footer = ({ isOpen }: { isOpen: SharedValue<boolean> }) => {
 
   const moreOptionAnimation = useAnimatedStyle(() => {
     return {
-      opacity: withTiming(isOpen.value ? 1 : 0, {
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      }),
+      opacity: withTiming(isOpen.value ? 1 : 0, timingConfig),
       transform: [
         {
-          scale: withTiming(isOpen.value ? 1 : 0, {
-            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-          }),
+          scale: withSpring(isOpen.value ? 1 : 0, springConfig),
         },
         {
-          translateX: withTiming(isOpen.value ? -40 : 40, {
-            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-          }),
+          translateX: withSpring(isOpen.value ? -40 : 40, springConfig),
         },
       ],
     };
   });
+
   const centerTextStyle = useAnimatedStyle(() => {
     return {
-      opacity: withTiming(isOpen.value ? 1 : 0),
+      opacity: withTiming(isOpen.value ? 1 : 0, timingConfig),
       transform: [
         {
-          scale: withTiming(isOpen.value ? 1.2 : 0),
+          scale: withSpring(isOpen.value ? 1.2 : 0, springConfig),
         },
       ],
     };
