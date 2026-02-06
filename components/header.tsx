@@ -268,6 +268,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: SIZES.BUTTON_GAP,
+    left: -SIZES.BUTTON_GAP,
   } as ViewStyle,
   blurOverlay: {
     ...StyleSheet.absoluteFillObject,

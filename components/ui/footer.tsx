@@ -1,6 +1,6 @@
 import { easing, HEADER_FOOTER_PADDING } from "@/constants/constants";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { BlurView } from "expo-blur";
+import { CircleEllipsis, FolderPlus, SquarePen } from "lucide-react-native";
 import React, { memo, useCallback } from "react";
 import {
   Platform,
@@ -209,9 +209,14 @@ const Footer = memo<FooterProps>(
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               disabled={!onAddFolderPress}
             >
-              <MaterialCommunityIcons
+              {/* <MaterialCommunityIcons
                 name="folder-plus-outline"
                 size={SIZES.FOLDER_ICON}
+                color={iconColor}
+              /> */}
+              <FolderPlus
+                size={SIZES.FOLDER_ICON}
+                strokeWidth={1.5}
                 color={iconColor}
               />
             </TouchableOpacity>
@@ -235,9 +240,9 @@ const Footer = memo<FooterProps>(
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               disabled={!onMoreOptionsPress}
             >
-              <MaterialCommunityIcons
-                name="dots-horizontal-circle-outline"
+              <CircleEllipsis
                 size={SIZES.MORE_ICON}
+                strokeWidth={1.5}
                 color={iconColor}
               />
             </TouchableOpacity>
@@ -280,9 +285,9 @@ const Footer = memo<FooterProps>(
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           disabled={!onEditPress}
         >
-          <MaterialCommunityIcons
-            name="square-edit-outline"
+          <SquarePen
             size={SIZES.EDIT_ICON}
+            strokeWidth={1.5}
             color={iconColor}
           />
         </TouchableOpacity>

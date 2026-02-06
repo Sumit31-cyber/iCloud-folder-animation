@@ -29,7 +29,8 @@ const GAP = 20;
 const PLACEHOLDER_WIDTHS = ["100%", "40%", "70%"] as const;
 const PLACEHOLDER_COUNT = 3;
 
-const CARD_STYLES = [
+// Three different card style variations for different folders
+const CARD_STYLES_VARIATION_1 = [
   {
     rotation: "-18deg",
     translateX: 6,
@@ -48,6 +49,55 @@ const CARD_STYLES = [
     translateY: 12,
     zIndex: 1,
   },
+] as const;
+
+const CARD_STYLES_VARIATION_2 = [
+  {
+    rotation: "-15deg",
+    translateX: 0,
+    translateY: 10,
+    zIndex: 3,
+  },
+  {
+    rotation: "0deg",
+    translateX: 0,
+    translateY: -5,
+    zIndex: 2,
+  },
+  {
+    rotation: "15deg",
+    translateX: 0,
+    translateY: 14,
+    zIndex: 1,
+  },
+] as const;
+
+const CARD_STYLES_VARIATION_3 = [
+  {
+    rotation: "-20deg",
+    translateX: 10,
+    translateY: -10,
+    zIndex: 3,
+  },
+  {
+    rotation: "-8deg",
+    translateX: -10,
+    translateY: -10,
+    zIndex: 2,
+  },
+  {
+    rotation: "-15deg",
+    translateX: -20,
+    translateY: -10,
+    zIndex: 1,
+  },
+] as const;
+
+// Array to hold all variations
+const CARD_STYLES_VARIATIONS = [
+  CARD_STYLES_VARIATION_1,
+  CARD_STYLES_VARIATION_2,
+  CARD_STYLES_VARIATION_3,
 ] as const;
 
 const springConfig = {
@@ -91,9 +141,10 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
       if (activeFolderIndex.value !== -1) {
         folderBlurIntensity.value = withTiming(0, { duration: 1200 });
       } else {
-        folderBlurIntensity.value = withTiming(100, { duration: 1200 });
+        folderBlurIntensity.value = withTiming(40, { duration: 1200 });
       }
     }, [activeFolderIndex]);
+
     const placeholders = useMemo(
       () =>
         Array.from({ length: PLACEHOLDER_COUNT }, (_, index) => ({
@@ -103,10 +154,73 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
       []
     );
 
+    // const rDocStyle = useAnimatedStyle(() => {
+    //   const isActive = currentFolderIndex === activeFolderIndex.value;
+    //   const currentIndex = docData.id;
+
+    //   // Select card style variation based on folder index
+    //   const styleVariation = CARD_STYLES_VARIATIONS[currentFolderIndex % 3];
+    //   const stackStyle = styleVariation[Math.min(docIndex, 2)];
+
+    //   const baseYOffset = -(currentFolderIndex * 200 + GAP * 2);
+
+    //   // 🧠 dynamic row calculation
+    //   const rowIndex = Math.floor(currentIndex / ROW_SIZE);
+
+    //   const expandedTranslateY =
+    //     rowIndex >= 0 ? baseYOffset + rowIndex * (EXP_CARD_HEIGHT + GAP) : 0;
+
+    //   const collapsedLeft = docIndex === 0 ? 60 : 60 + 80 * docIndex;
+
+    //   const expandedCardWidth = SCREEN_WIDTH * 0.5 - GAP * 2;
+
+    //   const expandedLeft =
+    //     currentIndex % ROW_SIZE === 0 ? -5 : expandedCardWidth + GAP + 5;
+
+    //   return {
+    //     height: withSpring(
+    //       isActive ? EXP_CARD_HEIGHT : CARD_HEIGHT,
+    //       springConfig
+    //     ),
+
+    //     width: withSpring(
+    //       isActive ? (SCREEN_WIDTH - GAP * 3) * 0.5 : CARD_WIDTH,
+    //       springConfig
+    //     ),
+
+    //     opacity: withTiming(
+    //       isActive || currentIndex <= 2 ? 1 : 0.8,
+    //       timingConfig
+    //     ),
+
+    //     borderRadius: withSpring(isActive ? 20 : 6, springConfig),
+
+    //     left: withSpring(isActive ? expandedLeft : collapsedLeft, springConfig),
+
+    //     transform: [
+    //       {
+    //         rotate: withSpring(
+    //           isActive ? "0deg" : stackStyle.rotation,
+    //           springConfig
+    //         ),
+    //       },
+    //       {
+    //         translateY: withSpring(
+    //           isActive ? expandedTranslateY - GAP * 1.5 : stackStyle.translateY,
+    //           springConfig
+    //         ),
+    //       },
+    //     ],
+    //   };
+    // });
+
     const rDocStyle = useAnimatedStyle(() => {
       const isActive = currentFolderIndex === activeFolderIndex.value;
       const currentIndex = docData.id;
-      const stackStyle = CARD_STYLES[Math.min(docIndex, 2)];
+
+      // Select card style variation based on folder index
+      const styleVariation = CARD_STYLES_VARIATIONS[currentFolderIndex % 3];
+      const stackStyle = styleVariation[Math.min(docIndex, 2)];
 
       const baseYOffset = -(currentFolderIndex * 200 + GAP * 2);
 
@@ -151,6 +265,12 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
             ),
           },
           {
+            translateX: withSpring(
+              isActive ? 0 : stackStyle.translateX,
+              springConfig
+            ),
+          },
+          {
             translateY: withSpring(
               isActive ? expandedTranslateY - GAP * 1.5 : stackStyle.translateY,
               springConfig
@@ -159,7 +279,6 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
         ],
       };
     });
-
     const animatedContentStyle = useAnimatedStyle(() => {
       const isContentVisible = activeFolderIndex.value !== -1;
 
