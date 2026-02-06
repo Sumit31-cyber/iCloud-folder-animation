@@ -1,11 +1,14 @@
 import { easing, formattedDate } from "@/constants/constants";
 import { chunkArray, Note } from "@/constants/docsData";
 import { Entypo } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 import React, { memo, useMemo } from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import Animated, {
   SharedValue,
   useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue,
   withDelay,
   withSpring,
   withTiming,
@@ -78,8 +81,19 @@ interface DocumentCardProps {
   docData: Note;
 }
 
+const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
+
 const DocumentCard: React.FC<DocumentCardProps> = memo(
   ({ currentFolderIndex, activeFolderIndex, docIndex, docData }) => {
+    const folderBlurIntensity = useSharedValue<number | undefined>(40);
+
+    useDerivedValue(() => {
+      if (activeFolderIndex.value !== -1) {
+        folderBlurIntensity.value = withTiming(0, { duration: 1200 });
+      } else {
+        folderBlurIntensity.value = withTiming(100, { duration: 1200 });
+      }
+    }, [activeFolderIndex]);
     const placeholders = useMemo(
       () =>
         Array.from({ length: PLACEHOLDER_COUNT }, (_, index) => ({
@@ -151,7 +165,7 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
 
       return {
         opacity: withDelay(
-          activeFolderIndex.value !== -1 ? 650 : 0,
+          activeFolderIndex.value !== -1 ? 600 : 0,
           withTiming(isContentVisible ? 1 : 0, {
             duration: 300,
             easing: easing,
@@ -172,6 +186,7 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
 
     return (
       <Animated.View style={[styles.card, rDocStyle]}>
+        {/* Notes Content */}
         <Animated.View
           style={[
             animatedContentStyle,
@@ -228,6 +243,13 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
             </Text>
             <Entypo name="dots-three-horizontal" size={16} color="#818080" />
           </View>
+
+          <AnimatedBlurView
+            pointerEvents="none"
+            tint="extraLight"
+            intensity={folderBlurIntensity}
+            style={[StyleSheet.absoluteFill]}
+          />
         </Animated.View>
 
         <Animated.View

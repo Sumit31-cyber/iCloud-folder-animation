@@ -2,15 +2,18 @@ import Folder from "@/components/folders";
 import Header from "@/components/header";
 import Footer from "@/components/ui/footer";
 import { notesData } from "@/constants/docsData";
-import React from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 
 export default function App() {
   const isOpen = useSharedValue<boolean>(false);
+  const [activeFolderIndex, setActiveFolderIndex] = useState(-1);
   const openedFolderIndex = useSharedValue(-1);
-  const handleOnFolderPress = () => {
+  const handleOnFolderPress = (currentIndex: number) => {
     isOpen.value = !isOpen.value;
+    openedFolderIndex.value = currentIndex;
+    setActiveFolderIndex(currentIndex);
   };
 
   return (
@@ -45,15 +48,17 @@ export default function App() {
               item={item}
               gradientColor={item.gradientColor}
               onPress={() => {
-                handleOnFolderPress();
-                openedFolderIndex.value = index;
+                handleOnFolderPress(index);
               }}
               openedFolderIndex={openedFolderIndex}
             />
           );
         })}
       </View>
-      <Footer isOpen={isOpen} />
+      <Footer
+        isOpen={isOpen}
+        notesCount={notesData[activeFolderIndex]?.totalNotes ?? 0}
+      />
     </View>
   );
 }

@@ -34,7 +34,7 @@ export const notesData = [
   {
     id: "icloud",
     title: "All iCloud",
-    gradientColor: ["#ef4065", "#eb1943"] as GradientColors,
+    gradientColor: ["#48cae4", "#03045e"] as GradientColors,
     totalNotes: 32,
     notes: [
       {
@@ -97,7 +97,7 @@ export const notesData = [
   {
     id: "work",
     title: "Work",
-    gradientColor: ["#3488ff", "#18aaeb"] as GradientColors,
+    gradientColor: ["#c77dff", "#10002b"] as GradientColors,
     totalNotes: 6,
     notes: [
       {
@@ -157,7 +157,8 @@ export const notesData = [
   {
     id: "personal",
     title: "Personal",
-    gradientColor: ["#ffea00", "#ffa200"] as GradientColors,
+    // gradientColor: ["#ffea00", "#ffa200"] as GradientColors,
+    gradientColor: ["#ffba08", "#d00000"] as GradientColors,
     totalNotes: 17,
     notes: [
       {
