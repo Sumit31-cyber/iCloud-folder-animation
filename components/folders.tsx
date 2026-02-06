@@ -1,4 +1,4 @@
-import { GradientColors } from "@/app";
+import { GradientColors, NotesFolder } from "@/constants/docsData";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
@@ -7,28 +7,30 @@ import Animated, {
   Easing,
   SharedValue,
   useAnimatedStyle,
+  withDelay,
   withTiming,
 } from "react-native-reanimated";
 import Docs from "./docs";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-const _animationDuration = 1000;
+export const _animationDuration = 800;
 const Folder = ({
   height = 100,
   width = 180,
+  item,
   notchHeight = 22,
   borderRadius = 18,
-  gradientColor = ["#ef4065", "#eb1943"],
+  gradientColor,
   onPress,
   openedFolderIndex,
   index,
 }: {
   height?: number;
   width?: number;
+  item: NotesFolder;
   notchHeight?: number;
   borderRadius?: number;
-  gradientColor?: GradientColors;
+  gradientColor: GradientColors;
   onPress: () => void;
   openedFolderIndex: SharedValue<number>;
   index: number;
@@ -37,16 +39,19 @@ const Folder = ({
     return {
       transform: [
         {
-          translateY: withTiming(
-            openedFolderIndex.value !== -1
-              ? index < openedFolderIndex.value
-                ? -(600 * (index + 1))
-                : SCREEN_HEIGHT
-              : 0,
-            {
-              duration: _animationDuration,
-              easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-            }
+          translateY: withDelay(
+            openedFolderIndex.value !== -1 ? 140 : 0,
+            withTiming(
+              openedFolderIndex.value !== -1
+                ? index < openedFolderIndex.value
+                  ? -(600 * (index + 1))
+                  : SCREEN_HEIGHT
+                : 0,
+              {
+                duration: _animationDuration,
+                easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+              }
+            )
           ),
         },
       ],
@@ -155,7 +160,11 @@ const Folder = ({
           },
         ]}
       >
-        <Docs currentIndex={index} activeIndex={openedFolderIndex} />
+        <Docs
+          currentFolderIndex={index}
+          activeFolderIndex={openedFolderIndex}
+          docsData={item.notes}
+        />
       </Animated.View>
 
       {/* Blurred Folder Top Layer */}

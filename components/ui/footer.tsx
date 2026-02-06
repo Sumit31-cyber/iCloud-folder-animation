@@ -1,3 +1,4 @@
+import { HEADER_FOOTER_PADDING } from "@/constants/constants";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import React from "react";
 import { Dimensions, View } from "react-native";
@@ -7,9 +8,12 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const Footer = ({ isOpen }: { isOpen: SharedValue<boolean> }) => {
+  const { bottom } = useSafeAreaInsets();
+
   const addFolderAnimation = useAnimatedStyle(() => {
     return {
       opacity: withTiming(!isOpen.value ? 1 : 0, {
@@ -64,13 +68,12 @@ const Footer = ({ isOpen }: { isOpen: SharedValue<boolean> }) => {
     <View
       style={{
         flexDirection: "row",
-        height: SCREEN_HEIGHT * 0.08,
         width: "100%",
-        // backgroundColor: "#1e1e1e10",
         alignItems: "center",
         paddingHorizontal: 20,
-        marginBottom: 10,
         justifyContent: "space-evenly",
+        paddingBottom: bottom + HEADER_FOOTER_PADDING,
+        paddingTop: HEADER_FOOTER_PADDING,
         backgroundColor: "#F5F5F5",
       }}
     >

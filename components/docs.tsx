@@ -1,56 +1,83 @@
-import React, { useMemo } from "react";
-import { StyleSheet, View, ViewStyle } from "react-native";
-import { SharedValue } from "react-native-reanimated";
+import { chunkArray, Note } from "@/constants/docsData";
+import React, { memo, useMemo } from "react";
+import { Dimensions, StyleSheet, View } from "react-native";
+import Animated, {
+  SharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
+import { _animationDuration } from "./folders";
 
-interface PlaceholderConfig {
-  id: number;
-  width: string;
-}
+/* -------------------------------------------------------------------------- */
+/*                                   Config                                   */
+/* -------------------------------------------------------------------------- */
 
-interface CardStyleItem {
-  rotation: string;
-  translateX?: number;
-  translateY?: number;
-  zIndex: number;
-}
+const ROW_SIZE = 2;
 
-interface CardStyle {
-  initialPos: CardStyleItem;
-  finalPos: CardStyleItem;
-}
+const CARD_WIDTH = 80;
+const CARD_HEIGHT = 100;
+const EXP_CARD_HEIGHT = CARD_HEIGHT * 2;
+
+const GAP = 20;
+
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const PLACEHOLDER_WIDTHS = ["100%", "40%", "70%"] as const;
 const PLACEHOLDER_COUNT = 3;
 
-const CARD_STYLES: readonly CardStyle[] = [
+const CARD_STYLES = [
   {
-    initialPos: { rotation: "-20deg", translateX: 5, zIndex: 3 },
-    finalPos: { rotation: "-20deg", translateX: 5, zIndex: 3 },
+    rotation: "-18deg",
+    translateX: 6,
+    translateY: 0,
+    zIndex: 3,
   },
   {
-    initialPos: { rotation: "-20deg", translateY: 5, zIndex: 2 },
-    finalPos: { rotation: "-20deg", translateY: 5, zIndex: 2 },
+    rotation: "-6deg",
+    translateX: 0,
+    translateY: 6,
+    zIndex: 2,
   },
   {
-    initialPos: {
-      rotation: "12deg",
-      translateY: 10,
-      translateX: -8,
-      zIndex: 1,
-    },
-    finalPos: { rotation: "12deg", translateY: 10, translateX: -8, zIndex: 1 },
+    rotation: "10deg",
+    translateX: -6,
+    translateY: 12,
+    zIndex: 1,
   },
 ] as const;
 
-const Placeholder: React.FC<{ width: string }> = React.memo(() => (
-  <View style={[styles.placeholder]} />
+/* -------------------------------------------------------------------------- */
+/*                               Placeholder UI                               */
+/* -------------------------------------------------------------------------- */
+
+interface PlaceholderProps {
+  width: string;
+}
+
+const Placeholder: React.FC<PlaceholderProps> = memo(({ width }) => (
+  <View style={[styles.placeholder, { width: width as any }]} />
 ));
 
 Placeholder.displayName = "Placeholder";
 
-const DocumentCard: React.FC<{ cardStyle: CardStyle }> = React.memo(
-  ({ cardStyle }) => {
-    const placeholders = useMemo<PlaceholderConfig[]>(
+/* -------------------------------------------------------------------------- */
+/*                               Document Card                                */
+/* -------------------------------------------------------------------------- */
+
+interface DocumentCardProps {
+  currentFolderIndex: number;
+  activeFolderIndex: SharedValue<number>;
+  docIndex: number;
+  docData: Note;
+}
+
+const DocumentCard: React.FC<DocumentCardProps> = memo(
+  ({ currentFolderIndex, activeFolderIndex, docIndex, docData }) => {
+    /**
+     * Placeholder lines inside document card
+     * Static + memoized
+     */
+    const placeholders = useMemo(
       () =>
         Array.from({ length: PLACEHOLDER_COUNT }, (_, index) => ({
           id: index,
@@ -59,68 +86,140 @@ const DocumentCard: React.FC<{ cardStyle: CardStyle }> = React.memo(
       []
     );
 
-    const transformStyle: ViewStyle = useMemo(
-      () => ({
+    const rDocStyle = useAnimatedStyle(() => {
+      const isActive = currentFolderIndex === activeFolderIndex.value;
+      const currentIndex = docData.id;
+      const stackStyle = CARD_STYLES[Math.min(docIndex, 2)];
+
+      const baseYOffset = -(currentFolderIndex * 200 + GAP * 2);
+
+      // 🧠 dynamic row calculation
+      const rowIndex = Math.floor(currentIndex / ROW_SIZE);
+
+      const expandedTranslateY =
+        rowIndex >= 0 ? baseYOffset + rowIndex * (EXP_CARD_HEIGHT + GAP) : 0;
+
+      const collapsedLeft = docIndex === 0 ? 60 : 60 + 80 * docIndex;
+
+      const expandedCardWidth = SCREEN_WIDTH * 0.5 - GAP * 2;
+
+      const expandedLeft =
+        currentIndex % ROW_SIZE === 0 ? -5 : expandedCardWidth + GAP + 5;
+
+      return {
+        height: withTiming(isActive ? EXP_CARD_HEIGHT : CARD_HEIGHT, {
+          duration: _animationDuration,
+        }),
+
+        width: withTiming(
+          isActive ? (SCREEN_WIDTH - GAP * 3) * 0.5 : CARD_WIDTH,
+          { duration: _animationDuration }
+        ),
+
+        opacity: withTiming(isActive || currentIndex <= 2 ? 1 : 0, {
+          duration: _animationDuration,
+        }),
+
+        borderRadius: withTiming(isActive ? 20 : 6, {
+          duration: _animationDuration,
+        }),
+
+        left: withTiming(isActive ? expandedLeft : collapsedLeft, {
+          duration: _animationDuration,
+        }),
+
         transform: [
-          { rotate: cardStyle.initialPos.rotation },
-          ...(cardStyle.initialPos.translateX
-            ? [{ translateX: cardStyle.initialPos.translateX }]
-            : []),
-          ...(cardStyle.initialPos.translateY
-            ? [{ translateY: cardStyle.initialPos.translateY }]
-            : []),
+          {
+            rotate: withTiming(isActive ? "0deg" : stackStyle.rotation, {
+              duration: _animationDuration,
+            }),
+          },
+          {
+            translateY: withTiming(
+              isActive ? expandedTranslateY : stackStyle.translateY,
+              { duration: _animationDuration }
+            ),
+          },
         ],
-        zIndex: cardStyle.initialPos.zIndex,
-      }),
-      [cardStyle]
-    );
+      };
+    });
 
     return (
-      <View style={[styles.card, transformStyle]}>
+      <Animated.View style={[styles.card, rDocStyle]}>
         {placeholders.map((placeholder) => (
           <Placeholder key={placeholder.id} width={placeholder.width} />
         ))}
-      </View>
+      </Animated.View>
     );
   }
 );
 
 DocumentCard.displayName = "DocumentCard";
 
-interface Props {
-  currentIndex: number;
-  activeIndex: SharedValue<number>;
+/* -------------------------------------------------------------------------- */
+/*                                    Docs                                    */
+/* -------------------------------------------------------------------------- */
+
+interface DocsProps {
+  currentFolderIndex: number;
+  activeFolderIndex: SharedValue<number>;
+  docsData: Note[];
 }
-const Docs: React.FC<Props> = ({ currentIndex, activeIndex }) => {
+
+const Docs: React.FC<DocsProps> = ({
+  currentFolderIndex,
+  activeFolderIndex,
+  docsData,
+}) => {
+  const arrayData = useMemo(() => chunkArray(docsData, 3), [docsData]);
+
+  if (__DEV__) {
+    console.log("[Docs] chunked docs:", arrayData);
+  }
+
   return (
     <View style={styles.container}>
-      {CARD_STYLES.map((cardStyle, index) => (
-        <DocumentCard key={index} cardStyle={cardStyle} />
+      {arrayData.map((row, rowIndex) => (
+        <View key={`row-${rowIndex}`} style={styles.row}>
+          {row.map((doc, index) => (
+            <DocumentCard
+              key={doc.id}
+              docIndex={index}
+              currentFolderIndex={currentFolderIndex}
+              activeFolderIndex={activeFolderIndex}
+              docData={doc}
+            />
+          ))}
+        </View>
       ))}
     </View>
   );
 };
 
-export default Docs;
+export default memo(Docs);
+
+/* -------------------------------------------------------------------------- */
+/*                                   Styles                                   */
+/* -------------------------------------------------------------------------- */
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "flex-end",
-    justifyContent: "center",
+    marginTop: 30,
+  },
+  row: {
     flexDirection: "row",
   },
   card: {
-    height: "85%",
-    aspectRatio: 0.8,
+    position: "absolute",
     backgroundColor: "#fff",
+    padding: "3%",
+    gap: 2,
+
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.1,
     shadowRadius: 6,
-    elevation: 8, // Android shadow
-    borderRadius: 6,
-    gap: 2,
-    padding: "3%",
+    elevation: 8,
   },
   placeholder: {
     height: 8,

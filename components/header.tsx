@@ -1,3 +1,4 @@
+import { HEADER_FOOTER_PADDING } from "@/constants/constants";
 import { Feather } from "@expo/vector-icons";
 import React from "react";
 import {
@@ -13,6 +14,7 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -23,6 +25,7 @@ const Header = ({
   isOpen: SharedValue<boolean>;
   onBackButtonPress: () => void;
 }) => {
+  const { top } = useSafeAreaInsets();
   const backButtonAnimation = useAnimatedStyle(() => {
     return {
       opacity: withTiming(isOpen.value ? 1 : 0),
@@ -63,12 +66,15 @@ const Header = ({
     <View
       style={{
         flexDirection: "row",
-        height: SCREEN_HEIGHT * 0.08,
         width: "100%",
         alignItems: "center",
         paddingHorizontal: 20,
         marginBottom: 10,
         justifyContent: "space-between",
+        paddingTop: top + HEADER_FOOTER_PADDING,
+        paddingBottom: HEADER_FOOTER_PADDING,
+        zIndex: 1,
+        backgroundColor: "#F5F5F5",
       }}
     >
       <View

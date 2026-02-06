@@ -1,0 +1,1 @@
+export const HEADER_FOOTER_PADDING = 14;
