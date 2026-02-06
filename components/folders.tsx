@@ -7,7 +7,6 @@ import Animated, {
   Easing,
   SharedValue,
   useAnimatedStyle,
-  withDelay,
   withTiming,
 } from "react-native-reanimated";
 import Docs from "./docs";
@@ -39,19 +38,16 @@ const Folder = ({
     return {
       transform: [
         {
-          translateY: withDelay(
-            openedFolderIndex.value !== -1 ? 140 : 0,
-            withTiming(
-              openedFolderIndex.value !== -1
-                ? index < openedFolderIndex.value
-                  ? -(600 * (index + 1))
-                  : SCREEN_HEIGHT
-                : 0,
-              {
-                duration: _animationDuration,
-                easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-              }
-            )
+          translateY: withTiming(
+            openedFolderIndex.value !== -1
+              ? index < openedFolderIndex.value
+                ? -(600 * (index + 1))
+                : SCREEN_HEIGHT
+              : 0,
+            {
+              duration: _animationDuration,
+              easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+            }
           ),
         },
       ],

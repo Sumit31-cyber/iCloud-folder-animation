@@ -1,3 +1,4 @@
+import { easing } from "@/constants/constants";
 import { chunkArray, Note } from "@/constants/docsData";
 import React, { memo, useMemo } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
@@ -109,35 +110,40 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
       return {
         height: withTiming(isActive ? EXP_CARD_HEIGHT : CARD_HEIGHT, {
           duration: _animationDuration,
+          easing: easing,
         }),
 
         width: withTiming(
           isActive ? (SCREEN_WIDTH - GAP * 3) * 0.5 : CARD_WIDTH,
-          { duration: _animationDuration }
+          { duration: _animationDuration, easing: easing }
         ),
 
-        opacity: withTiming(isActive || currentIndex <= 2 ? 1 : 0, {
+        opacity: withTiming(isActive || currentIndex <= 2 ? 1 : 0.8, {
           duration: _animationDuration,
+          easing: easing,
         }),
 
         borderRadius: withTiming(isActive ? 20 : 6, {
           duration: _animationDuration,
+          easing: easing,
         }),
 
         left: withTiming(isActive ? expandedLeft : collapsedLeft, {
           duration: _animationDuration,
+          easing: easing,
         }),
 
         transform: [
           {
             rotate: withTiming(isActive ? "0deg" : stackStyle.rotation, {
               duration: _animationDuration,
+              easing: easing,
             }),
           },
           {
             translateY: withTiming(
               isActive ? expandedTranslateY : stackStyle.translateY,
-              { duration: _animationDuration }
+              { duration: _animationDuration, easing: easing }
             ),
           },
         ],

@@ -1,7 +1,7 @@
 import { HEADER_FOOTER_PADDING } from "@/constants/constants";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import React from "react";
-import { Dimensions, View } from "react-native";
+import { View } from "react-native";
 import Animated, {
   Easing,
   SharedValue,
@@ -9,7 +9,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const Footer = ({ isOpen }: { isOpen: SharedValue<boolean> }) => {
   const { bottom } = useSafeAreaInsets();

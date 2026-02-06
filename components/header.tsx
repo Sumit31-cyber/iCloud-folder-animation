@@ -1,4 +1,4 @@
-import { HEADER_FOOTER_PADDING } from "@/constants/constants";
+import { easing, HEADER_FOOTER_PADDING } from "@/constants/constants";
 import { Feather } from "@expo/vector-icons";
 import React from "react";
 import {
@@ -9,7 +9,6 @@ import {
   View,
 } from "react-native";
 import Animated, {
-  Easing,
   SharedValue,
   useAnimatedStyle,
   withTiming,
@@ -32,12 +31,12 @@ const Header = ({
       transform: [
         {
           scale: withTiming(isOpen.value ? 1 : 0, {
-            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+            easing: easing,
           }),
         },
         {
           translateX: withTiming(isOpen.value ? -80 : 0, {
-            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+            easing: easing,
           }),
         },
       ],
@@ -46,17 +45,17 @@ const Header = ({
   const headerTitleStyle = useAnimatedStyle(() => {
     return {
       opacity: withTiming(!isOpen.value ? 1 : 0, {
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+        easing: easing,
       }),
       transform: [
         {
           scale: withTiming(!isOpen.value ? 1 : 0, {
-            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+            easing: easing,
           }),
         },
         {
           translateX: withTiming(!isOpen.value ? 0 : -140, {
-            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+            easing: easing,
           }),
         },
       ],
