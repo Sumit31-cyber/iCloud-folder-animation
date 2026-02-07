@@ -7,6 +7,7 @@ import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   SharedValue,
   useAnimatedStyle,
+  withDelay,
   withSpring,
 } from "react-native-reanimated";
 import Docs from "./docs";
@@ -59,6 +60,28 @@ const Folder = ({
 
     return {
       transform: [{ translateY: withSpring(translateY, SPRING_CONFIG) }],
+    };
+  }, [openedFolderIndex]);
+
+  const topLayerAnimatedStyle = useAnimatedStyle(() => {
+    const isActive = openedFolderIndex.value === index;
+
+    return {
+      transform: [
+        {
+          perspective: -150,
+        },
+        // 🔥 depth animation
+        {
+          scale: withDelay(300, withSpring(isActive ? 1.1 : 1, SPRING_CONFIG)),
+        },
+        {
+          rotateX: withDelay(
+            300,
+            withSpring(isActive ? "8deg" : "0deg", SPRING_CONFIG)
+          ),
+        },
+      ],
     };
   }, [openedFolderIndex]);
 
@@ -137,13 +160,13 @@ const Folder = ({
       <Animated.View
         style={[transformationStyle, styles.topLayer, { height, width }]}
       >
-        <View
+        <Animated.View
           style={[
+            topLayerAnimatedStyle,
             styles.blurContainer,
             {
               borderColor: `${String(gradientColor[1])}10`,
-              borderBottomLeftRadius: borderRadius,
-              borderBottomRightRadius: borderRadius,
+              borderRadius: borderRadius,
             },
           ]}
         >
@@ -166,7 +189,7 @@ const Folder = ({
             </View>
             <Text style={styles.count}>{item.totalNotes}</Text>
           </View>
-        </View>
+        </Animated.View>
       </Animated.View>
     </Pressable>
   );
