@@ -23,6 +23,10 @@ export default function RootLayout() {
     medium: require("../assets/fonts/Fredoka_Condensed-Medium.ttf"),
     bold: require("../assets/fonts/Fredoka_Condensed-Bold.ttf"),
     boldExpanded: require("../assets/fonts/Fredoka_Expanded-Bold.ttf"),
+    SNRegular: require("../assets/fonts/SNPro-Regular.ttf"),
+    SNMedium: require("../assets/fonts/SNPro-Medium.ttf"),
+    SNBold: require("../assets/fonts/SNPro-Bold.ttf"),
+    SNSemibold: require("../assets/fonts/SNPro-SemiBold.ttf"),
   });
 
   useEffect(() => {

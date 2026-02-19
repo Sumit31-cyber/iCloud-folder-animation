@@ -3,7 +3,14 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ellipsis } from "lucide-react-native";
 import React, { memo } from "react";
-import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import Animated, {
   SharedValue,
   useAnimatedStyle,
@@ -78,7 +85,7 @@ const Folder = ({
         {
           rotateX: withDelay(
             300,
-            withSpring(isActive ? "8deg" : "0deg", SPRING_CONFIG)
+            withSpring(isActive ? "8deg" : "0deg", SPRING_CONFIG),
           ),
         },
       ],
@@ -91,8 +98,8 @@ const Folder = ({
         ? index === openedFolderIndex.value
           ? 0
           : index < openedFolderIndex.value
-          ? -(STACK_OFFSET * (index + 1))
-          : SCREEN_HEIGHT
+            ? -(STACK_OFFSET * (index + 1))
+            : SCREEN_HEIGHT
         : 0;
 
     return {
@@ -158,7 +165,21 @@ const Folder = ({
 
       {/* Blurred Top Layer */}
       <Animated.View
-        style={[transformationStyle, styles.topLayer, { height, width }]}
+        style={[
+          transformationStyle,
+          styles.topLayer,
+          {
+            height,
+            width,
+            shadowColor: "#111111",
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.3,
+            shadowRadius: 5,
+          },
+        ]}
       >
         <Animated.View
           style={[
@@ -167,27 +188,69 @@ const Folder = ({
             {
               borderColor: `${String(gradientColor[1])}10`,
               borderRadius: borderRadius,
+              overflow: "hidden",
             },
           ]}
         >
-          <BlurView intensity={18} style={StyleSheet.absoluteFill} />
+          <BlurView
+            intensity={18}
+            style={[
+              StyleSheet.absoluteFill,
+              {
+                borderRadius: borderRadius,
+              },
+            ]}
+          />
           <LinearGradient
             colors={gradientColor}
             style={[
               styles.gradient,
+
               {
-                borderBottomLeftRadius: borderRadius,
-                borderBottomRightRadius: borderRadius,
+                borderRadius: borderRadius,
               },
             ]}
           />
 
-          <View style={styles.content}>
+          <View style={[styles.content, { borderRadius: borderRadius }]}>
             <View style={styles.headerRow}>
               <Text style={styles.title}>{item.title}</Text>
-              <Ellipsis size={26} color="white" opacity={0.9} />
+              <Ellipsis size={18} color="white" opacity={0.9} />
             </View>
             <Text style={styles.count}>{item.totalNotes}</Text>
+            <View
+              style={{
+                position: "absolute",
+                bottom: 8,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: width,
+                paddingHorizontal: 20,
+              }}
+            >
+              <Text
+                style={[
+                  {
+                    color: "white",
+                    fontFamily: "regular",
+                    opacity: 0.7,
+                    fontSize: 12,
+                  },
+                ]}
+              >
+                Last added time Feb 14, 2026
+              </Text>
+              <Image
+                style={{ height: 20, width: 20, opacity: 0.9 }}
+                source={require("@/assets/images/settings.png")}
+              />
+              {/* <Ionicons
+                name="settings-sharp"
+                size={18}
+                color="rgba(252,252,252,0.9)"
+              /> */}
+            </View>
           </View>
         </Animated.View>
       </Animated.View>
@@ -222,6 +285,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: "40%",
     height: "100%",
+    top: 1,
   },
 
   rightBottom: {
@@ -252,8 +316,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: "60%",
     width: "100%",
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    overflow: "hidden",
     zIndex: 100,
   },
 
@@ -264,6 +326,8 @@ const styles = StyleSheet.create({
 
   content: {
     ...StyleSheet.absoluteFillObject,
+    borderWidth: 1.5,
+    borderColor: "rgba(252,252,252,0.1)",
     padding: 20,
   },
 
@@ -280,7 +344,7 @@ const styles = StyleSheet.create({
   },
 
   count: {
-    fontSize: 24,
+    fontSize: 22,
     color: "white",
     fontFamily: "regular",
     top: -4,

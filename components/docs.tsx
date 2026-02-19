@@ -1,6 +1,6 @@
 import { easing, formattedDate } from "@/constants/constants";
 import { chunkArray, Note } from "@/constants/docsData";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import React, { memo, useMemo } from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
@@ -151,68 +151,8 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
           id: index,
           width: PLACEHOLDER_WIDTHS[index],
         })),
-      []
+      [],
     );
-
-    // const rDocStyle = useAnimatedStyle(() => {
-    //   const isActive = currentFolderIndex === activeFolderIndex.value;
-    //   const currentIndex = docData.id;
-
-    //   // Select card style variation based on folder index
-    //   const styleVariation = CARD_STYLES_VARIATIONS[currentFolderIndex % 3];
-    //   const stackStyle = styleVariation[Math.min(docIndex, 2)];
-
-    //   const baseYOffset = -(currentFolderIndex * 200 + GAP * 2);
-
-    //   // 🧠 dynamic row calculation
-    //   const rowIndex = Math.floor(currentIndex / ROW_SIZE);
-
-    //   const expandedTranslateY =
-    //     rowIndex >= 0 ? baseYOffset + rowIndex * (EXP_CARD_HEIGHT + GAP) : 0;
-
-    //   const collapsedLeft = docIndex === 0 ? 60 : 60 + 80 * docIndex;
-
-    //   const expandedCardWidth = SCREEN_WIDTH * 0.5 - GAP * 2;
-
-    //   const expandedLeft =
-    //     currentIndex % ROW_SIZE === 0 ? -5 : expandedCardWidth + GAP + 5;
-
-    //   return {
-    //     height: withSpring(
-    //       isActive ? EXP_CARD_HEIGHT : CARD_HEIGHT,
-    //       springConfig
-    //     ),
-
-    //     width: withSpring(
-    //       isActive ? (SCREEN_WIDTH - GAP * 3) * 0.5 : CARD_WIDTH,
-    //       springConfig
-    //     ),
-
-    //     opacity: withTiming(
-    //       isActive || currentIndex <= 2 ? 1 : 0.8,
-    //       timingConfig
-    //     ),
-
-    //     borderRadius: withSpring(isActive ? 20 : 6, springConfig),
-
-    //     left: withSpring(isActive ? expandedLeft : collapsedLeft, springConfig),
-
-    //     transform: [
-    //       {
-    //         rotate: withSpring(
-    //           isActive ? "0deg" : stackStyle.rotation,
-    //           springConfig
-    //         ),
-    //       },
-    //       {
-    //         translateY: withSpring(
-    //           isActive ? expandedTranslateY - GAP * 1.5 : stackStyle.translateY,
-    //           springConfig
-    //         ),
-    //       },
-    //     ],
-    //   };
-    // });
 
     const rDocStyle = useAnimatedStyle(() => {
       const isActive = currentFolderIndex === activeFolderIndex.value;
@@ -240,15 +180,15 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
       return {
         height: withSpring(
           isActive ? EXP_CARD_HEIGHT : CARD_HEIGHT,
-          springConfig
+          springConfig,
         ),
 
         width: withSpring(
           isActive ? (SCREEN_WIDTH - GAP * 3) * 0.5 : CARD_WIDTH,
-          springConfig
+          springConfig,
         ),
 
-        borderRadius: withSpring(isActive ? 20 : 6, springConfig),
+        borderRadius: withSpring(isActive ? 12 : 6, springConfig),
 
         left: withSpring(isActive ? expandedLeft : collapsedLeft, springConfig),
 
@@ -256,19 +196,19 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
           {
             rotate: withSpring(
               isActive ? "0deg" : stackStyle.rotation,
-              springConfig
+              springConfig,
             ),
           },
           {
             translateX: withSpring(
               isActive ? 0 : stackStyle.translateX,
-              springConfig
+              springConfig,
             ),
           },
           {
             translateY: withSpring(
               isActive ? expandedTranslateY - GAP * 1.5 : stackStyle.translateY,
-              springConfig
+              springConfig,
             ),
           },
         ],
@@ -283,7 +223,7 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
           withTiming(isContentVisible ? 1 : 0, {
             duration: 300,
             easing: easing,
-          })
+          }),
         ),
       };
     });
@@ -298,6 +238,8 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
       };
     });
 
+    const Icon = docData.icon;
+
     return (
       <Animated.View style={[styles.card, rDocStyle]}>
         {/* Notes Content */}
@@ -305,13 +247,34 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
           style={[
             animatedContentStyle,
             StyleSheet.absoluteFill,
-            { flex: 1, padding: 10 },
+            {
+              flex: 1,
+              padding: 10,
+              borderRadius: 12,
+            },
           ]}
         >
+          <View
+            style={[
+              StyleSheet.absoluteFill,
+              { borderRadius: 12, overflow: "hidden", opacity: 0.04 },
+            ]}
+          >
+            <View style={{ right: -50, position: "absolute", bottom: -50 }}>
+              {Icon && (
+                <MaterialCommunityIcons
+                  name={docData.icon}
+                  size={150}
+                  color={docData.iconColor}
+                />
+              )}
+              {/* <MaterialCommunityIcons name="clock" size={150} color="black" /> */}
+            </View>
+          </View>
           <Text
             style={{
               fontFamily: "medium",
-              fontSize: 20,
+              fontSize: 18,
               color: "#363636",
               marginBottom: 5,
             }}
@@ -324,8 +287,8 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
                 <Text
                   key={index}
                   style={{
-                    fontFamily: "regular",
-                    fontSize: 16,
+                    fontFamily: "SNRegular",
+                    fontSize: 14,
                     color: "#818080",
                   }}
                 >
@@ -347,8 +310,8 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
           >
             <Text
               style={{
-                fontFamily: "regular",
-                fontSize: 16,
+                fontFamily: "SNMedium",
+                fontSize: 12,
                 color: "#818080",
                 textTransform: "uppercase",
               }}
@@ -379,7 +342,7 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
         </Animated.View>
       </Animated.View>
     );
-  }
+  },
 );
 
 DocumentCard.displayName = "DocumentCard";
