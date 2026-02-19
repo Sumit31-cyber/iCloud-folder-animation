@@ -1,4 +1,5 @@
 import { easing, HEADER_FOOTER_PADDING } from "@/constants/constants";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { ChevronLeft } from "lucide-react-native";
@@ -43,11 +44,11 @@ const ANIMATION_VALUES = {
   HEADER_TITLE_TRANSLATE_X: -140,
 } as const;
 
-const COLORS = {
-  BACKGROUND: "#F5F5F5",
-  ICON: "#000000",
-  TEXT: "#000000",
-} as const;
+// const COLORS = {
+//   BACKGROUND: "#F5F5F5",
+//   ICON: "#000000",
+//   TEXT: "#000000",
+// } as const;
 
 const SIZES = {
   ICON: 26,
@@ -68,8 +69,6 @@ interface HeaderProps {
   isOpen: SharedValue<boolean>;
   onBackButtonPress: () => void;
   onSearchPress?: () => void;
-  backgroundColor?: string;
-  iconColor?: string;
   title?: string;
   subtitle?: string;
 }
@@ -82,19 +81,18 @@ const Header = memo<HeaderProps>(
     isOpen,
     onBackButtonPress,
     onSearchPress,
-    backgroundColor = COLORS.BACKGROUND,
-    iconColor = COLORS.ICON,
     title = "Folders",
     subtitle = "All iCloud",
   }) => {
     const { top } = useSafeAreaInsets();
+    const { colors } = useAppTheme();
 
     // Blur intensity animations
     const folderBlurIntensity = useSharedValue<number | undefined>(
-      ANIMATION_VALUES.BLUR_INTENSITY_CLOSED
+      ANIMATION_VALUES.BLUR_INTENSITY_CLOSED,
     );
     const backButtonBlurIntensity = useSharedValue<number | undefined>(
-      ANIMATION_VALUES.BLUR_INTENSITY_CLOSED
+      ANIMATION_VALUES.BLUR_INTENSITY_CLOSED,
     );
 
     // Sync blur animations with open state
@@ -102,20 +100,20 @@ const Header = memo<HeaderProps>(
       if (isOpen.value) {
         folderBlurIntensity.value = withTiming(
           ANIMATION_VALUES.BLUR_INTENSITY_OPEN,
-          TIMING_CONFIG
+          TIMING_CONFIG,
         );
         backButtonBlurIntensity.value = withTiming(
           ANIMATION_VALUES.BLUR_INTENSITY_CLOSED,
-          TIMING_CONFIG
+          TIMING_CONFIG,
         );
       } else {
         folderBlurIntensity.value = withTiming(
           ANIMATION_VALUES.BLUR_INTENSITY_CLOSED,
-          TIMING_CONFIG
+          TIMING_CONFIG,
         );
         backButtonBlurIntensity.value = withTiming(
           ANIMATION_VALUES.BLUR_INTENSITY_OPEN,
-          TIMING_CONFIG
+          TIMING_CONFIG,
         );
       }
     }, [isOpen]);
@@ -129,12 +127,12 @@ const Header = memo<HeaderProps>(
           {
             translateX: withSpring(
               isOpen.value ? ANIMATION_VALUES.BACK_BUTTON_TRANSLATE_X : 0,
-              SPRING_CONFIG
+              SPRING_CONFIG,
             ),
           },
         ],
       }),
-      [isOpen]
+      [isOpen],
     );
 
     // Header title animation
@@ -146,12 +144,12 @@ const Header = memo<HeaderProps>(
           {
             translateX: withSpring(
               !isOpen.value ? 0 : ANIMATION_VALUES.HEADER_TITLE_TRANSLATE_X,
-              SPRING_CONFIG
+              SPRING_CONFIG,
             ),
           },
         ],
       }),
-      [isOpen]
+      [isOpen],
     );
 
     // Memoized search press handler
@@ -168,21 +166,24 @@ const Header = memo<HeaderProps>(
       <View
         style={[
           styles.container,
-          { paddingTop: top + HEADER_FOOTER_PADDING, backgroundColor },
+          {
+            paddingTop: top + HEADER_FOOTER_PADDING,
+            backgroundColor: colors.backgroundColor,
+          },
         ]}
       >
         <View style={styles.titleContainer}>
           {/* Closed state - Folder title */}
           <Animated.View style={headerTitleAnimatedStyle}>
             <Text
-              style={[styles.title, { color: iconColor }]}
+              style={[styles.title, { color: colors.textColor }]}
               numberOfLines={1}
             >
               {title}
             </Text>
             <AnimatedBlurView
               pointerEvents="none"
-              tint="extraLight"
+              tint="default"
               intensity={folderBlurIntensity}
               style={styles.blurOverlay}
             />
@@ -199,18 +200,18 @@ const Header = memo<HeaderProps>(
               accessibilityLabel="Go back"
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <ChevronLeft size={SIZES.ICON} color={iconColor} />
+              <ChevronLeft size={SIZES.ICON} color={colors.textColor} />
               {/* <Feather name="arrow-left" size={SIZES.ICON} color={iconColor} /> */}
             </TouchableOpacity>
             <Text
-              style={[styles.subtitle, { color: iconColor }]}
+              style={[styles.subtitle, { color: colors.textColor }]}
               numberOfLines={1}
             >
               {subtitle}
             </Text>
             <AnimatedBlurView
               pointerEvents="none"
-              tint="extraLight"
+              tint="default"
               intensity={backButtonBlurIntensity}
               style={styles.blurOverlay}
             />
@@ -226,11 +227,11 @@ const Header = memo<HeaderProps>(
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           disabled={!onSearchPress}
         >
-          <Feather name="search" size={SIZES.ICON} color={iconColor} />
+          <Feather name="search" size={SIZES.ICON} color={colors.textColor} />
         </TouchableOpacity>
       </View>
     );
-  }
+  },
 );
 
 Header.displayName = "Header";

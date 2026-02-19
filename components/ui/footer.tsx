@@ -1,4 +1,5 @@
 import { easing, HEADER_FOOTER_PADDING } from "@/constants/constants";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { BlurView } from "expo-blur";
 import { CircleEllipsis, FolderPlus, SquarePen } from "lucide-react-native";
 import React, { memo, useCallback } from "react";
@@ -85,19 +86,17 @@ const Footer = memo<FooterProps>(
     onAddFolderPress,
     onMoreOptionsPress,
     onEditPress,
-    backgroundColor = COLORS.BACKGROUND,
-    iconColor = COLORS.ICON,
-    textColor = COLORS.TEXT,
     notesLabel = "Notes",
   }) => {
     const { bottom } = useSafeAreaInsets();
+    const { colors } = useAppTheme();
 
     // Blur intensity animations
     const folderBlurIntensity = useSharedValue<number | undefined>(
-      ANIMATION_VALUES.BLUR_INTENSITY_CLOSED
+      ANIMATION_VALUES.BLUR_INTENSITY_CLOSED,
     );
     const notesCountBlurIntensity = useSharedValue<number | undefined>(
-      ANIMATION_VALUES.BLUR_INTENSITY_CLOSED
+      ANIMATION_VALUES.BLUR_INTENSITY_CLOSED,
     );
 
     // Sync blur animations with open state
@@ -105,20 +104,20 @@ const Footer = memo<FooterProps>(
       if (isOpen.value) {
         folderBlurIntensity.value = withTiming(
           ANIMATION_VALUES.BLUR_INTENSITY_OPEN,
-          TIMING_CONFIG
+          TIMING_CONFIG,
         );
         notesCountBlurIntensity.value = withTiming(
           ANIMATION_VALUES.BLUR_INTENSITY_CLOSED,
-          TIMING_CONFIG
+          TIMING_CONFIG,
         );
       } else {
         folderBlurIntensity.value = withTiming(
           ANIMATION_VALUES.BLUR_INTENSITY_CLOSED,
-          TIMING_CONFIG
+          TIMING_CONFIG,
         );
         notesCountBlurIntensity.value = withTiming(
           ANIMATION_VALUES.BLUR_INTENSITY_OPEN,
-          TIMING_CONFIG
+          TIMING_CONFIG,
         );
       }
     }, [isOpen]);
@@ -132,12 +131,12 @@ const Footer = memo<FooterProps>(
           {
             translateX: withSpring(
               !isOpen.value ? 0 : ANIMATION_VALUES.ADD_FOLDER_TRANSLATE_X,
-              SPRING_CONFIG
+              SPRING_CONFIG,
             ),
           },
         ],
       }),
-      [isOpen]
+      [isOpen],
     );
 
     // More options button animation
@@ -151,12 +150,12 @@ const Footer = memo<FooterProps>(
               isOpen.value
                 ? ANIMATION_VALUES.MORE_OPTIONS_TRANSLATE_X_OPEN
                 : ANIMATION_VALUES.MORE_OPTIONS_TRANSLATE_X_CLOSED,
-              SPRING_CONFIG
+              SPRING_CONFIG,
             ),
           },
         ],
       }),
-      [isOpen]
+      [isOpen],
     );
 
     // Center text animation
@@ -167,12 +166,12 @@ const Footer = memo<FooterProps>(
           {
             scale: withSpring(
               isOpen.value ? ANIMATION_VALUES.CENTER_TEXT_SCALE_OPEN : 0,
-              SPRING_CONFIG
+              SPRING_CONFIG,
             ),
           },
         ],
       }),
-      [isOpen]
+      [isOpen],
     );
 
     // Memoized event handlers
@@ -191,11 +190,21 @@ const Footer = memo<FooterProps>(
     // Format notes count text
     const notesCountText = `${notesCount} ${notesLabel}`;
 
+    const headerTitleAnimatedStyle = useAnimatedStyle(
+      () => ({
+        opacity: withTiming(isOpen.value ? 1 : 0, TIMING_CONFIG),
+      }),
+      [isOpen],
+    );
+
     return (
       <View
         style={[
           styles.container,
-          { paddingBottom: bottom + HEADER_FOOTER_PADDING, backgroundColor },
+          {
+            paddingBottom: bottom + HEADER_FOOTER_PADDING,
+            backgroundColor: colors.backgroundColor,
+          },
         ]}
       >
         <View style={styles.leftContainer}>
@@ -217,14 +226,14 @@ const Footer = memo<FooterProps>(
               <FolderPlus
                 size={SIZES.FOLDER_ICON}
                 strokeWidth={1.5}
-                color={iconColor}
+                color={colors.textColor}
               />
             </TouchableOpacity>
             <AnimatedBlurView
               pointerEvents="none"
-              tint="extraLight"
+              tint="default"
               intensity={folderBlurIntensity}
-              style={styles.blurOverlay}
+              style={[styles.blurOverlay]}
             />
           </Animated.View>
 
@@ -243,12 +252,12 @@ const Footer = memo<FooterProps>(
               <CircleEllipsis
                 size={SIZES.MORE_ICON}
                 strokeWidth={1.5}
-                color={iconColor}
+                color={colors.textColor}
               />
             </TouchableOpacity>
             <AnimatedBlurView
               pointerEvents="none"
-              tint="extraLight"
+              tint="default"
               intensity={notesCountBlurIntensity}
               style={styles.blurOverlay}
             />
@@ -256,12 +265,14 @@ const Footer = memo<FooterProps>(
         </View>
 
         {/* Center - Notes count */}
-        <View style={styles.centerContainer}>
+        <Animated.View
+          style={[headerTitleAnimatedStyle, styles.centerContainer]}
+        >
           <Animated.Text
             style={[
               styles.centerText,
               centerTextAnimatedStyle,
-              { color: textColor },
+              { color: colors.textColor },
             ]}
             numberOfLines={1}
             accessibilityLabel={`${notesCount} ${notesLabel}`}
@@ -270,11 +281,11 @@ const Footer = memo<FooterProps>(
           </Animated.Text>
           <AnimatedBlurView
             pointerEvents="none"
-            tint="extraLight"
+            tint="default"
             intensity={notesCountBlurIntensity}
             style={styles.blurOverlay}
           />
-        </View>
+        </Animated.View>
 
         {/* Right - Edit button */}
         <TouchableOpacity
@@ -288,12 +299,12 @@ const Footer = memo<FooterProps>(
           <SquarePen
             size={SIZES.EDIT_ICON}
             strokeWidth={1.5}
-            color={iconColor}
+            color={colors.textColor}
           />
         </TouchableOpacity>
       </View>
     );
-  }
+  },
 );
 
 Footer.displayName = "Footer";

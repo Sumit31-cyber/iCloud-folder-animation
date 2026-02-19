@@ -22,7 +22,8 @@ export interface Note {
 export interface NotesFolder {
   id: string;
   title: string;
-  gradientColor: GradientColors;
+  lightThemeGradient: GradientColors;
+  darkThemeGradient: GradientColors;
   totalNotes: number;
   notes: Note[];
 }
@@ -41,7 +42,9 @@ export const notesData: NotesFolder[] = [
   {
     id: "icloud",
     title: "All iCloud",
-    gradientColor: ["#0EA5E9", "#10002b"] as GradientColors,
+    lightThemeGradient: ["#74c69d", "#081c15"] as GradientColors,
+    darkThemeGradient: ["#153f30", "#081c15"] as GradientColors,
+
     totalNotes: 32,
 
     notes: [
@@ -112,7 +115,9 @@ export const notesData: NotesFolder[] = [
   {
     id: "work",
     title: "Work",
-    gradientColor: ["#7C3AED", "#3b337c"] as GradientColors,
+    lightThemeGradient: ["#7C3AED", "#3b337c"] as GradientColors,
+    darkThemeGradient: ["#432874", "#1e1b4b"] as GradientColors,
+
     totalNotes: 6,
     notes: [
       {
@@ -176,7 +181,190 @@ export const notesData: NotesFolder[] = [
   {
     id: "personal",
     title: "Personal",
-    gradientColor: ["#F97316", "#d00000"] as GradientColors,
+    lightThemeGradient: ["#F97316", "#d00000"] as GradientColors,
+    darkThemeGradient: ["#9a3412", "#3f0000"] as GradientColors,
+
+    totalNotes: 17,
+    notes: [
+      {
+        id: 0,
+        title: "📝 Daily journal",
+        preview: ["Good focus today.", "Animations are finally clicking."],
+        createdAt: "2025-04-03T21:30:00.000Z",
+        updatedAt: "2025-04-03T21:30:00.000Z",
+      },
+      {
+        id: 1,
+        title: "🏋 Fitness goals",
+        icon: "gymnastics",
+        iconColor: "#6a040f",
+        preview: [
+          "◦ Increase stamina",
+          "◦ Consistent workouts",
+          "◦ Better sleep",
+        ],
+        createdAt: "2025-04-03T06:30:00.000Z",
+        updatedAt: "2025-04-03T06:30:00.000Z",
+      },
+      {
+        id: 2,
+        title: "📚 Books to read",
+        iconColor: "#0a2472",
+        icon: "book",
+        preview: ["◦ Atomic Habits", "◦ Deep Work", "◦ Psychology of Design"],
+        createdAt: "2025-04-02T20:00:00.000Z",
+        updatedAt: "2025-04-02T20:00:00.000Z",
+      },
+      {
+        id: 3,
+        title: "✈️ Travel ideas",
+        preview: ["Short trip to mountains.", "Work-friendly locations."],
+        createdAt: "2025-04-02T11:00:00.000Z",
+        updatedAt: "2025-04-02T11:00:00.000Z",
+      },
+      {
+        id: 4,
+        title: "Learning plan",
+        preview: ["Master Reanimated layouts.", "Study gesture conflicts."],
+        createdAt: "2025-04-01T10:00:00.000Z",
+        updatedAt: "2025-04-01T10:00:00.000Z",
+      },
+      {
+        id: 5,
+        title: "Random thoughts",
+        preview: ["Simplicity beats cleverness.", "Smooth UX is invisible."],
+        createdAt: "2025-04-01T22:15:00.000Z",
+        updatedAt: "2025-04-01T22:15:00.000Z",
+      },
+    ],
+  },
+  {
+    id: "personal-1",
+    title: "Experiments",
+
+    lightThemeGradient: ["#dee2e6", "#495057"] as GradientColors,
+    darkThemeGradient: ["#343a40", "#111418"] as GradientColors,
+
+    totalNotes: 22,
+    notes: [
+      {
+        id: 0,
+        title: "📝 Daily journal",
+        preview: ["Good focus today.", "Animations are finally clicking."],
+        createdAt: "2025-04-03T21:30:00.000Z",
+        updatedAt: "2025-04-03T21:30:00.000Z",
+      },
+      {
+        id: 1,
+        title: "🏋 Fitness goals",
+        icon: "gymnastics",
+        iconColor: "#6a040f",
+        preview: [
+          "◦ Increase stamina",
+          "◦ Consistent workouts",
+          "◦ Better sleep",
+        ],
+        createdAt: "2025-04-03T06:30:00.000Z",
+        updatedAt: "2025-04-03T06:30:00.000Z",
+      },
+      {
+        id: 2,
+        title: "📚 Books to read",
+        iconColor: "#0a2472",
+        icon: "book",
+        preview: ["◦ Atomic Habits", "◦ Deep Work", "◦ Psychology of Design"],
+        createdAt: "2025-04-02T20:00:00.000Z",
+        updatedAt: "2025-04-02T20:00:00.000Z",
+      },
+      {
+        id: 3,
+        title: "✈️ Travel ideas",
+        preview: ["Short trip to mountains.", "Work-friendly locations."],
+        createdAt: "2025-04-02T11:00:00.000Z",
+        updatedAt: "2025-04-02T11:00:00.000Z",
+      },
+      {
+        id: 4,
+        title: "Learning plan",
+        preview: ["Master Reanimated layouts.", "Study gesture conflicts."],
+        createdAt: "2025-04-01T10:00:00.000Z",
+        updatedAt: "2025-04-01T10:00:00.000Z",
+      },
+      {
+        id: 5,
+        title: "Random thoughts",
+        preview: ["Simplicity beats cleverness.", "Smooth UX is invisible."],
+        createdAt: "2025-04-01T22:15:00.000Z",
+        updatedAt: "2025-04-01T22:15:00.000Z",
+      },
+    ],
+  },
+  {
+    id: "personal-2",
+    title: "Personal",
+    // gradientColor: ["#0EA5E9", "#10002b"] as GradientColors,
+    lightThemeGradient: ["#71a5de", "#0d00a4"] as GradientColors,
+    darkThemeGradient: ["#1e3a8a", "#020617"] as GradientColors,
+
+    totalNotes: 17,
+    notes: [
+      {
+        id: 0,
+        title: "📝 Daily journal",
+        preview: ["Good focus today.", "Animations are finally clicking."],
+        createdAt: "2025-04-03T21:30:00.000Z",
+        updatedAt: "2025-04-03T21:30:00.000Z",
+      },
+      {
+        id: 1,
+        title: "🏋 Fitness goals",
+        icon: "gymnastics",
+        iconColor: "#6a040f",
+        preview: [
+          "◦ Increase stamina",
+          "◦ Consistent workouts",
+          "◦ Better sleep",
+        ],
+        createdAt: "2025-04-03T06:30:00.000Z",
+        updatedAt: "2025-04-03T06:30:00.000Z",
+      },
+      {
+        id: 2,
+        title: "📚 Books to read",
+        iconColor: "#0a2472",
+        icon: "book",
+        preview: ["◦ Atomic Habits", "◦ Deep Work", "◦ Psychology of Design"],
+        createdAt: "2025-04-02T20:00:00.000Z",
+        updatedAt: "2025-04-02T20:00:00.000Z",
+      },
+      {
+        id: 3,
+        title: "✈️ Travel ideas",
+        preview: ["Short trip to mountains.", "Work-friendly locations."],
+        createdAt: "2025-04-02T11:00:00.000Z",
+        updatedAt: "2025-04-02T11:00:00.000Z",
+      },
+      {
+        id: 4,
+        title: "Learning plan",
+        preview: ["Master Reanimated layouts.", "Study gesture conflicts."],
+        createdAt: "2025-04-01T10:00:00.000Z",
+        updatedAt: "2025-04-01T10:00:00.000Z",
+      },
+      {
+        id: 5,
+        title: "Random thoughts",
+        preview: ["Simplicity beats cleverness.", "Smooth UX is invisible."],
+        createdAt: "2025-04-01T22:15:00.000Z",
+        updatedAt: "2025-04-01T22:15:00.000Z",
+      },
+    ],
+  },
+  {
+    id: "personal-3",
+    title: "Personal",
+    lightThemeGradient: ["#F97316", "#d00000"] as GradientColors,
+    darkThemeGradient: ["#9a3412", "#3f0000"] as GradientColors,
     totalNotes: 17,
     notes: [
       {

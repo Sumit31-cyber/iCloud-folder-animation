@@ -1,5 +1,6 @@
 import { easing, formattedDate } from "@/constants/constants";
 import { chunkArray, Note } from "@/constants/docsData";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import React, { memo, useMemo } from "react";
@@ -118,9 +119,22 @@ interface PlaceholderProps {
   width: string;
 }
 
-const Placeholder: React.FC<PlaceholderProps> = memo(({ width }) => (
-  <View style={[styles.placeholder, { width: width as any }]} />
-));
+const Placeholder: React.FC<PlaceholderProps> = memo(({ width }) => {
+  const { colors, theme } = useAppTheme();
+  return (
+    <View
+      style={[
+        styles.placeholder,
+        {
+          width: width as any,
+          backgroundColor: theme.dark
+            ? "rgba(1,1,1,0.1)"
+            : colors.backgroundColor,
+        },
+      ]}
+    />
+  );
+});
 
 Placeholder.displayName = "Placeholder";
 
@@ -129,13 +143,15 @@ interface DocumentCardProps {
   activeFolderIndex: SharedValue<number>;
   docIndex: number;
   docData: Note;
+  scrollY: number;
 }
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 const DocumentCard: React.FC<DocumentCardProps> = memo(
-  ({ currentFolderIndex, activeFolderIndex, docIndex, docData }) => {
+  ({ scrollY, currentFolderIndex, activeFolderIndex, docIndex, docData }) => {
     const folderBlurIntensity = useSharedValue<number | undefined>(40);
+    const { theme, colors } = useAppTheme();
 
     useDerivedValue(() => {
       if (activeFolderIndex.value !== -1) {
@@ -191,6 +207,17 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
         borderRadius: withSpring(isActive ? 12 : 6, springConfig),
 
         left: withSpring(isActive ? expandedLeft : collapsedLeft, springConfig),
+        backgroundColor: withTiming(
+          activeFolderIndex.value === -1
+            ? theme.dark
+              ? "#edede9"
+              : "#ffffff"
+            : colors.cardBackground,
+          {
+            duration: activeFolderIndex.value === -1 ? 2000 : 600,
+            easing: easing,
+          },
+        ),
 
         transform: [
           {
@@ -207,13 +234,16 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
           },
           {
             translateY: withSpring(
-              isActive ? expandedTranslateY - GAP * 1.5 : stackStyle.translateY,
+              isActive
+                ? expandedTranslateY + scrollY - (GAP / 3) * 1.5
+                : stackStyle.translateY,
               springConfig,
             ),
           },
         ],
       };
     });
+
     const animatedContentStyle = useAnimatedStyle(() => {
       const isContentVisible = activeFolderIndex.value !== -1;
 
@@ -257,7 +287,11 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
           <View
             style={[
               StyleSheet.absoluteFill,
-              { borderRadius: 12, overflow: "hidden", opacity: 0.04 },
+              {
+                borderRadius: 12,
+                overflow: "hidden",
+                opacity: theme.dark ? 0.2 : 0.04,
+              },
             ]}
           >
             <View style={{ right: -50, position: "absolute", bottom: -50 }}>
@@ -265,7 +299,7 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
                 <MaterialCommunityIcons
                   name={docData.icon}
                   size={150}
-                  color={docData.iconColor}
+                  color={theme.dark ? "" : docData.iconColor}
                 />
               )}
               {/* <MaterialCommunityIcons name="clock" size={150} color="black" /> */}
@@ -275,7 +309,7 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
             style={{
               fontFamily: "medium",
               fontSize: 18,
-              color: "#363636",
+              color: theme.dark ? "#FFFFFF" : "#363636",
               marginBottom: 5,
             }}
           >
@@ -289,7 +323,7 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
                   style={{
                     fontFamily: "SNRegular",
                     fontSize: 14,
-                    color: "#818080",
+                    color: colors.notesColor,
                   }}
                 >
                   {preview}
@@ -312,18 +346,22 @@ const DocumentCard: React.FC<DocumentCardProps> = memo(
               style={{
                 fontFamily: "SNMedium",
                 fontSize: 12,
-                color: "#818080",
+                color: colors.notesColor,
                 textTransform: "uppercase",
               }}
             >
               {formattedDate(docData.createdAt)}
             </Text>
-            <Entypo name="dots-three-horizontal" size={16} color="#818080" />
+            <Entypo
+              name="dots-three-horizontal"
+              size={16}
+              color={colors.notesColor}
+            />
           </View>
 
           <AnimatedBlurView
             pointerEvents="none"
-            tint="extraLight"
+            tint="default"
             intensity={folderBlurIntensity}
             style={[StyleSheet.absoluteFill]}
           />
@@ -351,12 +389,14 @@ interface DocsProps {
   currentFolderIndex: number;
   activeFolderIndex: SharedValue<number>;
   docsData: Note[];
+  scrollY: number;
 }
 
 const Docs: React.FC<DocsProps> = ({
   currentFolderIndex,
   activeFolderIndex,
   docsData,
+  scrollY,
 }) => {
   const arrayData = useMemo(() => chunkArray(docsData, 3), [docsData]);
   return (
@@ -366,6 +406,7 @@ const Docs: React.FC<DocsProps> = ({
           {row.map((doc, index) => (
             <DocumentCard
               key={doc.id}
+              scrollY={scrollY}
               docIndex={index}
               currentFolderIndex={currentFolderIndex}
               activeFolderIndex={activeFolderIndex}
@@ -389,7 +430,6 @@ const styles = StyleSheet.create({
   },
   card: {
     position: "absolute",
-    backgroundColor: "#fff",
 
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -399,7 +439,7 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     height: 8,
-    backgroundColor: "#eeeeee",
+    // backgroundColor: "#eeeeee",
     borderRadius: 10,
   },
 });

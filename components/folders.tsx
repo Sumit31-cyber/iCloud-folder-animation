@@ -1,4 +1,5 @@
 import { GradientColors, NotesFolder } from "@/constants/docsData";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ellipsis } from "lucide-react-native";
@@ -44,6 +45,7 @@ type FolderProps = {
   onPress: () => void;
   openedFolderIndex: SharedValue<number>;
   index: number;
+  scrollY: number;
 };
 
 const Folder = ({
@@ -55,8 +57,10 @@ const Folder = ({
   gradientColor,
   onPress,
   openedFolderIndex,
+  scrollY,
   index,
 }: FolderProps) => {
+  const { colors, theme } = useAppTheme();
   const transformationStyle = useAnimatedStyle(() => {
     const translateY =
       openedFolderIndex.value !== -1
@@ -144,7 +148,12 @@ const Folder = ({
               },
             ]}
           />
-          <View style={[styles.notch, { height: notchHeight }]} />
+          <View
+            style={[
+              styles.notch,
+              { height: notchHeight, backgroundColor: colors.backgroundColor },
+            ]}
+          />
         </View>
       </Animated.View>
 
@@ -157,6 +166,7 @@ const Folder = ({
         ]}
       >
         <Docs
+          scrollY={scrollY}
           currentFolderIndex={index}
           activeFolderIndex={openedFolderIndex}
           docsData={item.notes}
@@ -171,13 +181,13 @@ const Folder = ({
           {
             height,
             width,
-            shadowColor: "#111111",
+            shadowColor: "black",
             shadowOffset: {
               width: 0,
               height: 2,
             },
-            shadowOpacity: 0.3,
-            shadowRadius: 5,
+            shadowOpacity: 0.2,
+            shadowRadius: 2,
           },
         ]}
       >
@@ -245,11 +255,6 @@ const Folder = ({
                 style={{ height: 20, width: 20, opacity: 0.9 }}
                 source={require("@/assets/images/settings.png")}
               />
-              {/* <Ionicons
-                name="settings-sharp"
-                size={18}
-                color="rgba(252,252,252,0.9)"
-              /> */}
             </View>
           </View>
         </Animated.View>
@@ -298,7 +303,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     width: "100%",
-    backgroundColor: "#F5F5F5",
     borderBottomLeftRadius: 15,
   },
 
