@@ -1,8 +1,7 @@
 import { easing, HEADER_FOOTER_PADDING } from "@/constants/constants";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import { ChevronLeft } from "lucide-react-native";
+import { ChevronLeft, CirclePlus } from "lucide-react-native";
 import React, { memo, useCallback } from "react";
 import {
   Platform,
@@ -167,11 +166,13 @@ const Header = memo<HeaderProps>(
         style={[
           styles.container,
           {
-            paddingTop: top + HEADER_FOOTER_PADDING,
+            paddingTop: top,
+
             backgroundColor: colors.backgroundColor,
           },
         ]}
       >
+        {/* <BlurView intensity={60} style={StyleSheet.absoluteFill} /> */}
         <View style={styles.titleContainer}>
           {/* Closed state - Folder title */}
           <Animated.View style={headerTitleAnimatedStyle}>
@@ -227,7 +228,7 @@ const Header = memo<HeaderProps>(
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           disabled={!onSearchPress}
         >
-          <Feather name="search" size={SIZES.ICON} color={colors.textColor} />
+          <CirclePlus size={SIZES.ICON} color={colors.textColor} />
         </TouchableOpacity>
       </View>
     );

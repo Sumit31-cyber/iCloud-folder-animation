@@ -44,14 +44,11 @@ export const notesData: NotesFolder[] = [
     title: "All iCloud",
     lightThemeGradient: ["#74c69d", "#081c15"] as GradientColors,
     darkThemeGradient: ["#153f30", "#081c15"] as GradientColors,
-
     totalNotes: 32,
-
     notes: [
       {
         id: 0,
         title: "☢️ Build review",
-        // icon: Shield,
         icon: "airballoon",
         iconColor: "#38b000",
         preview: [
@@ -183,7 +180,6 @@ export const notesData: NotesFolder[] = [
     title: "Personal",
     lightThemeGradient: ["#F97316", "#d00000"] as GradientColors,
     darkThemeGradient: ["#9a3412", "#3f0000"] as GradientColors,
-
     totalNotes: 17,
     notes: [
       {
@@ -241,10 +237,8 @@ export const notesData: NotesFolder[] = [
   {
     id: "personal-1",
     title: "Experiments",
-
     lightThemeGradient: ["#dee2e6", "#495057"] as GradientColors,
     darkThemeGradient: ["#343a40", "#111418"] as GradientColors,
-
     totalNotes: 22,
     notes: [
       {
@@ -302,10 +296,8 @@ export const notesData: NotesFolder[] = [
   {
     id: "personal-2",
     title: "Personal",
-    // gradientColor: ["#0EA5E9", "#10002b"] as GradientColors,
     lightThemeGradient: ["#71a5de", "#0d00a4"] as GradientColors,
     darkThemeGradient: ["#1e3a8a", "#020617"] as GradientColors,
-
     totalNotes: 17,
     notes: [
       {
