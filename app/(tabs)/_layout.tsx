@@ -5,10 +5,7 @@ export default function TabLayout() {
   const { colors } = useAppTheme();
   return (
     <NativeTabs>
-      <NativeTabs.Trigger
-        name="first"
-        options={{ iconColor: colors.textColor }}
-      >
+      <NativeTabs.Trigger name="first">
         <Label>List</Label>
         <Icon
           sf="rectangle.grid.1x2.fill"

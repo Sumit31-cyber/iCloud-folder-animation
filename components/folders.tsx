@@ -222,7 +222,17 @@ const Folder = ({
             ]}
           />
 
-          <View style={[styles.content, { borderRadius: borderRadius }]}>
+          <View
+            style={[
+              styles.content,
+              {
+                borderRadius: borderRadius,
+                borderColor: theme.dark
+                  ? "rgba(252,252,252,0.03)"
+                  : "rgba(252,252,252,0.1)",
+              },
+            ]}
+          >
             <View style={styles.headerRow}>
               <Text style={styles.title}>{item.title}</Text>
               <Ellipsis size={18} color="white" opacity={0.9} />
@@ -331,7 +341,7 @@ const styles = StyleSheet.create({
   content: {
     ...StyleSheet.absoluteFillObject,
     borderWidth: 1.5,
-    borderColor: "rgba(252,252,252,0.1)",
+
     padding: 20,
   },
 
